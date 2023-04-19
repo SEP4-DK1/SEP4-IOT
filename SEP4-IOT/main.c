@@ -24,6 +24,8 @@
 // define two Tasks
 void task1( void *pvParameters );
 void task2( void *pvParameters );
+void task3( void *pvParameters );
+void lora_handler_task( void *pvParameters );
 
 // define semaphore handle
 SemaphoreHandle_t xTestSemaphore;
@@ -54,13 +56,21 @@ void create_tasks_and_semaphores(void)
 	,  2  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 	,  NULL );
 
-	xTaskCreate(
-	task2
-	,  "Task2"  // A name just for humans
-	,  configMINIMAL_STACK_SIZE  // This stack size can be checked & adjusted by reading the Stack Highwater
-	,  NULL
-	,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-	,  NULL );
+	//xTaskCreate(
+	//task2
+	//,  "Task2"  // A name just for humans
+	//,  configMINIMAL_STACK_SIZE  // This stack size can be checked & adjusted by reading the Stack Highwater
+	//,  NULL
+	//,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	//,  NULL );
+	//
+	//xTaskCreate(
+	//lora_handler_task
+	//,  "Task3"  // A name just for humans
+	//,  configMINIMAL_STACK_SIZE  // This stack size can be checked & adjusted by reading the Stack Highwater
+	//,  NULL
+	//,  3  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	//,  NULL );
 }
 
 /*-----------------------------------------------------------*/
@@ -94,6 +104,48 @@ void task2( void *pvParameters )
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		puts("Task2"); // stdio functions are not reentrant - Should normally be protected by MUTEX
 		PORTA ^= _BV(PA7);
+	}
+}
+
+/*-----------------------------------------------------------*/
+void task3( void *pvParameters )
+{
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 60000/portTICK_PERIOD_MS; // 1000 ms
+
+	// Initialise the xLastWakeTime variable with the current time.
+	xLastWakeTime = xTaskGetTickCount();
+
+	for(;;)
+	{
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		puts("Task3"); // stdio functions are not reentrant - Should normally be protected by MUTEX
+		lora_driver_resetRn2483(1); // Activate reset line
+		vTaskDelay(2);
+		lora_driver_resetRn2483(0); // Release reset line
+		vTaskDelay(150); // Wait for tranceiver module to wake up after reset
+		lora_driver_flushBuffers(); // get rid of first version string from module after reset!
+		
+		printf("Test");
+		
+		lora_driver_payload_t payload;
+		payload.len = 1;
+		payload.portNo = 3;
+		payload.bytes[0] = 0b10101010;
+		
+		lora_driver_returnCode_t rc;
+		
+		if ((rc = lora_driver_sendUploadMessage(false, &payload)) == LORA_MAC_TX_OK )
+		{
+			// The uplink message is sent and there is no downlink message received
+			printf("Success!");
+		}
+		else if (rc == LORA_MAC_TX_OK) //yolo
+		{
+			// The uplink message is sent and a downlink message is received
+		}
+		
+		
 	}
 }
 
