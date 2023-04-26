@@ -288,6 +288,12 @@
     <Compile Include="FreeRTOS\src\variantHooks.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="LoRaWANHandler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\" />
@@ -296,8 +302,14 @@
     <Folder Include="FreeRTOS\Example\" />
     <Folder Include="FreeRTOS\FreeRTOSTraceDriver\" />
     <Folder Include="FreeRTOS\src\" />
+    <Folder Include="test" />
+    <Folder Include="test\basicTest" />
+    <Folder Include="test\lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CMakeLists.txt">
+      <SubType>compile</SubType>
+    </None>
     <None Include="drivers\.git">
       <SubType>compile</SubType>
     </None>
@@ -349,12 +361,18 @@
     <None Include="FreeRTOS\src\LICENSE.md">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="LoRaWANHandler.c">
+    <None Include="test\basicTest\CMakeLists.txt">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="main.c">
+    </None>
+    <None Include="test\basicTest\test1.cpp">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
+    <None Include="test\CMakeLists.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="test\main.cpp">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
