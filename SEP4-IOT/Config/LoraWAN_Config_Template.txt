@@ -1,0 +1,3 @@
+// Create a header file called "LoraWAN_Config.h" and provide the following definitions
+#define LORA_appEUI "YOUR LORA_appEUI"
+#define LORA_appKEY "YOUR LORA_appKEY"
