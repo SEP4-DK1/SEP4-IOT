@@ -1,5 +1,5 @@
 #pragma once
+#include <ATMEGA_FreeRTOS.h>
 
-void temperatureTransmit_initialize(void);
-void temperatureTransmit_createTask(void);
+void temperatureTransmit_createTask(UBaseType_t taskPriority);
 void temperatureTransmit_task(void *pvParameters);
