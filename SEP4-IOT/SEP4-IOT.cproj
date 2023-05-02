@@ -304,7 +304,6 @@
     <Folder Include="FreeRTOS\src\" />
     <Folder Include="test" />
     <Folder Include="test\basicTest" />
-    <Folder Include="test\lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CMakeLists.txt">
