@@ -1,11 +1,15 @@
 #include "TemperatureTransmit.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <ATMEGA_FreeRTOS.h>
 #include <task.h>
 
 #include "../Config/LoraWAN_Config.h"
 #include <lora_driver.h>
 #include <status_leds.h>
+#include <hih8120.h>
+
+#include "../SensorData.h"
 
 static void loRaWANSetup(void)
 {
@@ -105,9 +109,9 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority) {
 }
 
 void temperatureTransmit_task(void *pvParameters) {
-	taskInit();
+	//taskInit();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
+	const TickType_t xFrequency = pdMS_TO_TICKS(60000UL); // 300000 ms = 5 min
 	
 	lora_driver_payload_t _uplink_payload;
 	_uplink_payload.len = 2;
@@ -116,10 +120,15 @@ void temperatureTransmit_task(void *pvParameters) {
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		uint16_t temperature = sensorData_getTemperatureAverage();
+		sensorData_reset();
+		printf("Average Minute Temperature: %d\n", temperature);
+		// _uplink_payload.bytes[0] = (char) temperature;
+		// _uplink_payload.bytes[1] |= ((char) (temperature >> 8)) & 0b11000000;
+
+		// _uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
+		// _uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
 		
-		uint8_t testByte = 0xff;
-		_uplink_payload.bytes[0] = testByte;
-		_uplink_payload.bytes[1] = testByte;
-		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
+		//printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
 }

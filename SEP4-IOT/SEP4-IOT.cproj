@@ -291,6 +291,18 @@
     <Compile Include="FreeRTOS\src\variantHooks.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="SensorData.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SensorData.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\DataCollection.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\DataCollection.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Tasks\TemperatureTransmit.c">
       <SubType>compile</SubType>
     </Compile>
@@ -363,9 +375,6 @@
     <None Include="FreeRTOS\src\LICENSE.md">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="LoRaWANHandler.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
