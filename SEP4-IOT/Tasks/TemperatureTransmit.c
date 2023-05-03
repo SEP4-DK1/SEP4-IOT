@@ -98,7 +98,7 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority) {
 		xTaskCreate(
 		temperatureTransmit_task
 		,  "Temperature Transmit Task"
-		,  configMINIMAL_STACK_SIZE
+		,  configMINIMAL_STACK_SIZE+200
 		,  NULL
 		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
 		,  NULL );
@@ -107,7 +107,7 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority) {
 void temperatureTransmit_task(void *pvParameters) {
 	taskInit();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(300000); // 300000 ms = 5 min
+	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 	
 	lora_driver_payload_t _uplink_payload;
 	_uplink_payload.len = 1;
