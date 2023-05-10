@@ -11,14 +11,16 @@
 #include <status_leds.h>
 #include <hih8120.h>
 
+#include "SensorData.h"
 #include "Tasks/TemperatureTransmit.h"
 #include "Tasks/DataCollection.h"
 
 SemaphoreHandle_t mutex;
+sensorData_t sensorData;
 
 void createTasks(void) {
-	temperatureTransmit_createTask(3);
-	dataCollection_createTask(2);
+	temperatureTransmit_createTask(3, (void*)sensorData);
+	dataCollection_createTask(2, (void*)sensorData);
 }
 
 void runTaskSetups(void) {
@@ -33,7 +35,8 @@ void initialiseSystem(void) {
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
 	lora_driver_initialise(ser_USART1, NULL);
-	
+
+	sensorData = sensorData_init();
 	runTaskSetups();
 	createTasks();
 }

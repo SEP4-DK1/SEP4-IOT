@@ -98,20 +98,21 @@ void taskInit(void) {
 	loRaWANSetup();
 }
 
-void temperatureTransmit_createTask(UBaseType_t taskPriority) {
+void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		xTaskCreate(
 		temperatureTransmit_task
 		,  "Temperature Transmit Task"
 		,  configMINIMAL_STACK_SIZE+100
-		,  NULL
+		,  pvParameters
 		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
 		,  NULL );
 }
 
-void temperatureTransmit_task(void *pvParameters) {
+void temperatureTransmit_task(void* pvParameters) {
 	//taskInit();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(60000UL); // 300000 ms = 5 min
+	sensorData_t sensorData = (sensorData_t) pvParameters;
 	
 	lora_driver_payload_t _uplink_payload;
 	_uplink_payload.len = 2;
@@ -120,8 +121,8 @@ void temperatureTransmit_task(void *pvParameters) {
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		uint16_t temperature = sensorData_getTemperatureAverage();
-		sensorData_reset();
+		uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
+		sensorData_reset(sensorData);
 		printf("Average Minute Temperature: %d\n", temperature);
 		// _uplink_payload.bytes[0] = (char) temperature;
 		// _uplink_payload.bytes[1] |= ((char) (temperature >> 8)) & 0b11000000;

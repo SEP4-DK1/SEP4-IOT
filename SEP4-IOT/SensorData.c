@@ -2,38 +2,59 @@
 #include <ATMEGA_FreeRTOS.h>
 #include <hih8120.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-static sensorData_t sensorData;
+#define TEMPERATURE_OFFSET 40
 
-void sensorData_measure(){
-    hih8120_wakeup();
+sensorData_t sensorData_init() {
+    
+    sensorData_t data; 
+    data = malloc(sizeof(sensorData_t));
+    data->totalTemperature = 0;
+    data->totalHumidity = 0;
+    data->totalCarbondioxide = 0;
+    data->counter = 0;
+    return data;
+}
+
+void sensorData_destroy(sensorData_t data){
+    if (data != NULL)
+    {
+        free(data);
+    }
+}
+
+void sensorData_measure(sensorData_t data){
+    if (hih8120_wakeup() != HIH8120_OK) {
+        printf("ERROR: Wakeup HIH8120 failed\n");
+    }
     vTaskDelay(pdMS_TO_TICKS(50UL));
-    hih8120_measure();
+    if (hih8120_measure() != HIH8120_OK) {
+        printf("ERROR: Measure HIH8120 failed\n");
+    }
     vTaskDelay(pdMS_TO_TICKS(1UL));
-    int16_t temperature = (int16_t)(hih8120_getTemperature()*10)+200;
+    int16_t temperature = hih8120_getTemperature_x10();
     if (temperature < 0) temperature = 0;
     if (temperature > 1023) temperature = 1023;
-    sensorData->totalTemperature += temperature;
-    sensorData->counter++;
-    printf("totalTemperature: %d\ncounter: %d\n", temperature, sensorData->counter);
-    
+    data->totalTemperature += temperature;
+    data->counter++;
 }
 
-void sensorData_reset(){    
-    sensorData->totalTemperature = 0;
-    sensorData->totalHumidity = 0;
-    sensorData->totalCarbondioxide = 0;
-    sensorData->counter = 0;
+void sensorData_reset(sensorData_t data){    
+    data->totalTemperature = 0;
+    data->totalHumidity = 0;
+    data->totalCarbondioxide = 0;
+    data->counter = 0;
 }
 
-uint16_t sensorData_getTemperatureAverage() {
-    return sensorData->totalTemperature/sensorData->counter;
+uint16_t sensorData_getTemperatureAverage(sensorData_t data) {
+    return (data->totalTemperature / data->counter) - TEMPERATURE_OFFSET; // Maybe subtract the temperature offset somewhere else?
 }
 
-uint16_t sensorData_getHumidityAverage() {
-    return sensorData->totalHumidity/sensorData->counter;
+uint16_t sensorData_getHumidityAverage(sensorData_t data) {
+    return data->totalHumidity / data->counter;
 }
 
-uint16_t sensorData_getCarbondioxideAverage() {
-    return sensorData->totalCarbondioxide/sensorData->counter;
+uint16_t sensorData_getCarbondioxideAverage(sensorData_t data) {
+    return data->totalCarbondioxide / data->counter;
 }
