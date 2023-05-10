@@ -294,6 +294,36 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="test\FreeRTOS_defs\ATMEGA_FreeRTOS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\event_groups.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\fff.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\FreeRTOS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\FreeRTOS_FFF_MocksDeclaration.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\message_buffer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\queue.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\semphr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\task.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\" />
@@ -304,6 +334,7 @@
     <Folder Include="FreeRTOS\src\" />
     <Folder Include="test" />
     <Folder Include="test\basicTest" />
+    <Folder Include="test\FreeRTOS_defs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CMakeLists.txt">
@@ -367,6 +398,9 @@
       <SubType>compile</SubType>
     </None>
     <None Include="test\CMakeLists.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="test\FreeRTOS_defs\FreeRTOS_FFF_MocksDefinitions.cpp">
       <SubType>compile</SubType>
     </None>
     <None Include="test\main.cpp">
