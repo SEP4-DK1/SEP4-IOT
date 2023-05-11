@@ -12,4 +12,5 @@ test1.cpp
 
 target_link_libraries(runBasicTests gtest gtest_main)
 target_link_libraries(runBasicTests FreeRTOS_defs)
-target_link_libraries(runBasicTests SEP4-IOT)
+target_link_libraries(runBasicTests Tasks)
+target_link_libraries(runBasicTests DataModels)
