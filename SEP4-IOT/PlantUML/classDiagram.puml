@@ -1,0 +1,28 @@
+@startuml ClassDiagram
+namespace datastorage {
+    interface ISensorData{
+        {method} sensorData_t sensorData_init()
+        {method} void sensorData_destroy()
+        {method} void sensorData_measure(sensorData_t data)
+        {method} void sensorData_reset(sensorData_t data)
+        {method} uint16_t sensorData_getTemperatureAverage(sensorData_t data)
+        {method} uint16_t sensorData_getHumidityAverage(sensorData_t data)
+        {method} uint16_t sensorData_getCarbondioxideAverage(sensorData_t data)
+    }
+    
+    class SensorData {
+        {field} uint16_t totalTemperature
+        {field} uint16_t totalHumidity
+        {field} uint16_t totalCarbondioxide
+        {field} uint16_t counter
+        {method} sensorData_t sensorData_init()
+        {method} void sensorData_destroy()
+        {method} void sensorData_measure(sensorData_t data)
+        {method} void sensorData_reset(sensorData_t data)
+        {method} uint16_t sensorData_getTemperatureAverage(sensorData_t data)
+        {method} uint16_t sensorData_getHumidityAverage(sensorData_t data)
+        {method} uint16_t sensorData_getCarbondioxideAverage(sensorData_t data)
+    }
+    SensorData --|> ISensorData
+}
+@enduml
