@@ -297,6 +297,39 @@
     <Compile Include="FreeRTOS\src\variantHooks.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\ATMEGA_FreeRTOS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\event_groups.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\fff.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\FreeRTOS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\FreeRTOS_FFF_MocksDeclaration.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\message_buffer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\queue.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\semphr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\task.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test\FreeRTOS_defs\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Tasks\DataCollection.c">
       <SubType>compile</SubType>
     </Compile>
@@ -317,12 +350,18 @@
     <Folder Include="FreeRTOS\Example\" />
     <Folder Include="FreeRTOS\FreeRTOSTraceDriver\" />
     <Folder Include="FreeRTOS\src\" />
+    <Folder Include="test" />
+    <Folder Include="test\basicTest" />
+    <Folder Include="test\FreeRTOS_defs" />
     <Folder Include="Config" />
     <Folder Include="DataModels" />
     <Folder Include="PlantUML" />
     <Folder Include="Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CMakeLists.txt">
+      <SubType>compile</SubType>
+    </None>
     <None Include="Config\LoraWAN_Config_Template.txt">
       <SubType>compile</SubType>
     </None>
@@ -377,9 +416,21 @@
     <None Include="FreeRTOS\src\LICENSE.md">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="main.c">
+    <None Include="test\basicTest\CMakeLists.txt">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
+    <None Include="test\basicTest\test1.cpp">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="test\CMakeLists.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="test\FreeRTOS_defs\FreeRTOS_FFF_MocksDefinitions.cpp">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="test\main.cpp">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
