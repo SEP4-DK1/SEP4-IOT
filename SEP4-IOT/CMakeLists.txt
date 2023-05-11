@@ -14,9 +14,12 @@ add_definitions(-std=gnu++Ox)
 set (SOURCE_FILES main.cpp)
 add_executable(SEP4-IOT-run ${SOURCE_FILES})
 
-include_directories(SEP4-IOT)
+include_directories(Tasks)
+include_directories(DataModels)
 
-add_subdirectory(SEP4-IOT)
+add_subdirectory(Tasks)
 add_subdirectory(test)
+add_subdirectory(DataModels)
 
-target_link_libraries(SEP4-IOT-run SEP4-IOT)
+target_link_libraries(Tasks-run Tasks)
+target_link_libraries(DataModels-run DataModels)
