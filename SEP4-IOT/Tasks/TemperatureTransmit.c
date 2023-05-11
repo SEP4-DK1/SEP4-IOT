@@ -9,10 +9,18 @@
 #include <status_leds.h>
 #include <hih8120.h>
 
-#include "../SensorData.h"
+#include "../DataModels/SensorData.h"
 
-static void loRaWANSetup(void)
-{
+static void loRaWANSetup(void) {
+	// Hardware reset of LoRaWAN transceiver
+	lora_driver_resetRn2483(1);
+	vTaskDelay(2);
+	lora_driver_resetRn2483(0);
+	// Give it a chance to wakeup
+	vTaskDelay(150);
+
+	lora_driver_flushBuffers(); // get rid of first version string from module after reset!
+
 	char _out_buf[20];
 	lora_driver_returnCode_t rc;
 	status_leds_slowBlink(led_ST2); // OPTIONAL: Led the green led blink slowly while we are setting up LoRa
@@ -67,7 +75,7 @@ static void loRaWANSetup(void)
 		// Connected to LoRaWAN :-)
 		// Make the green led steady
 		status_leds_ledOn(led_ST2); // OPTIONAL
-		printf("Successfully connected to LoRaWAN");
+		printf("Successfully connected to LoRaWAN\n");
 	}
 	else
 	{
@@ -86,18 +94,6 @@ static void loRaWANSetup(void)
 	}
 }
 
-void taskInit(void) {
-	// Hardware reset of LoRaWAN transceiver
-	lora_driver_resetRn2483(1);
-	vTaskDelay(2);
-	lora_driver_resetRn2483(0);
-	// Give it a chance to wakeup
-	vTaskDelay(150);
-
-	lora_driver_flushBuffers(); // get rid of first version string from module after reset!
-	loRaWANSetup();
-}
-
 void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		xTaskCreate(
 		temperatureTransmit_task
@@ -108,10 +104,27 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters
 		,  NULL );
 }
 
+// Test Helper Function (Move this somewhere else at some point!)
+void printBits(size_t const size, void const * const ptr)
+{
+    unsigned char const *b = (unsigned char*) ptr;
+    unsigned char byte;
+    int i, j;
+    
+    for (i = 0; i < size; i++) {
+        for (j = 7; j >= 0; j--) {
+            byte = (b[i] >> j) & 1;
+            printf("%u", byte);
+        }
+		printf(" ");
+    }
+    puts("");
+}
+
 void temperatureTransmit_task(void* pvParameters) {
-	//taskInit();
+	loRaWANSetup();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(60000UL); // 300000 ms = 5 min
+	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 	sensorData_t sensorData = (sensorData_t) pvParameters;
 	
 	lora_driver_payload_t _uplink_payload;
@@ -124,12 +137,18 @@ void temperatureTransmit_task(void* pvParameters) {
 		uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
 		sensorData_reset(sensorData);
 		printf("Average Minute Temperature: %d\n", temperature);
-		// _uplink_payload.bytes[0] = (char) temperature;
-		// _uplink_payload.bytes[1] |= ((char) (temperature >> 8)) & 0b11000000;
+
+		// Clear payload bytes
+		for (int i = 0; i < _uplink_payload.len; i++) {
+			_uplink_payload.bytes[i] = 0;
+		}
+		
+		_uplink_payload.bytes[0] = (char) temperature;
+		_uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
 
 		// _uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
 		// _uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
-		
-		//printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
+
+		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
 }

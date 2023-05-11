@@ -11,7 +11,7 @@
 #include <status_leds.h>
 #include <hih8120.h>
 
-#include "SensorData.h"
+#include "DataModels/SensorData.h"
 #include "Tasks/TemperatureTransmit.h"
 #include "Tasks/DataCollection.h"
 

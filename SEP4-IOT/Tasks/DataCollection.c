@@ -1,5 +1,5 @@
 #include "DataCollection.h"
-#include "../SensorData.h"
+#include "../DataModels/SensorData.h"
 #include <hih8120.h>
 #include <stdio.h>
 
