@@ -328,6 +328,8 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="test\FreeRTOS_defs\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Tasks\DataCollection.c">
       <SubType>compile</SubType>
     </Compile>
@@ -418,7 +420,6 @@
       <SubType>compile</SubType>
     </None>
     <None Include="test\basicTest\test1.cpp">
-    <Compile Include="main.c">
       <SubType>compile</SubType>
     </None>
     <None Include="test\CMakeLists.txt">
