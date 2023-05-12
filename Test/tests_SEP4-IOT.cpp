@@ -13,6 +13,7 @@ extern "C"
 FAKE_VALUE_FUNC(hih8120_driverReturnCode_t, hih8120_measure);
 FAKE_VALUE_FUNC(hih8120_driverReturnCode_t, hih8120_wakeup);
 FAKE_VALUE_FUNC(int16_t, hih8120_getTemperature_x10);
+FAKE_VALUE_FUNC(uint16_t, hih8120_getHumidityPercent_x10);
 
 // Create Test fixture and Reset all Mocks before each test
 class Test_fixture : public ::testing::Test
@@ -31,7 +32,30 @@ protected:
 	{}
 };
 
-TEST_F(Test_fixture, Test_sensorDataMeasure)
+TEST_F(Test_fixture, Test_sensorDataMeasureHumidity)
+{
+	// Create sensorData struct
+	sensorData_t data = sensorData_init();
+
+	// Set up fake values for hih8120_measure and hih8120_getTemperature_x10
+	hih8120_measure_fake.return_val = HIH8120_OK;
+	hih8120_getHumidityPercent_x10_fake.return_val = 50;
+
+	// Call sensorData_measure
+	sensorData_measure(data);
+
+	// Check that the values have been updated correctly
+	ASSERT_EQ(data->totalTemperature, 0);
+	ASSERT_EQ(data->totalHumidity, 50);
+	ASSERT_EQ(data->totalCarbondioxide, 0);
+	ASSERT_EQ(data->counter, 1);
+
+	// Clean up
+	sensorData_destroy(data);
+}
+
+
+TEST_F(Test_fixture, Test_sensorDataMeasureTemperature)
 {
 	// Create sensorData struct
 	sensorData_t data = sensorData_init();
