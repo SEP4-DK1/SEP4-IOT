@@ -9,7 +9,7 @@
 sensorData_t sensorData_init() {
     
     sensorData_t data; 
-    data = malloc(sizeof(sensorData_t));
+    data = malloc(sizeof(sensorData_t)); 
     data->totalTemperature = 0;
     data->totalHumidity = 0;
     data->totalCarbondioxide = 0;
@@ -34,9 +34,13 @@ void sensorData_measure(sensorData_t data){
     }
     vTaskDelay(pdMS_TO_TICKS(1UL));
     int16_t temperature = hih8120_getTemperature_x10();
+    uint16_t humidity = hih8120_getHumidityPercent_x10();
     if (temperature < 0) temperature = 0;
     if (temperature > 1023) temperature = 1023;
     data->totalTemperature += temperature;
+    if (humidity < 0) humidity = 0;
+    if (humidity > 100) humidity = 100;
+    data->totalHumidity += humidity;
     data->counter++;
 }
 
