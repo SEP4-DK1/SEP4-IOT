@@ -9,7 +9,7 @@
 sensorData_t sensorData_init() {
     
     sensorData_t data; 
-    data = malloc(sizeof(sensorData_t));
+    data = malloc(sizeof(*data));
     data->totalTemperature = 0;
     data->totalHumidity = 0;
     data->totalCarbondioxide = 0;
