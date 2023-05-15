@@ -95,11 +95,14 @@ static void loRaWANSetup(void) {
 	}
 }
 
-temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData, MessageBufferHandle_t messageBufferHandle) {
 	temperatureTransmitParams_t temperatureTransmitParams;
 	temperatureTransmitParams = malloc(sizeof(*temperatureTransmitParams));
 	temperatureTransmitParams->mutex = mutex;
-	temperatureTransmitParams->sensorData = sensorData;
+	temperatureTransmitParams->sensorData = sensorData; // Something goes wrong right here: sensorData->counter returns different values after this line
+	temperatureTransmitParams->messageBufferHandle = messageBufferHandle;
+
+
 	return temperatureTransmitParams;
 }
 void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams) {
@@ -112,7 +115,7 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters
 		xTaskCreate(
 		temperatureTransmit_task
 		,  "Temperature Transmit Task"
-		,  configMINIMAL_STACK_SIZE+100
+		,  configMINIMAL_STACK_SIZE+200
 		,  pvParameters
 		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
 		,  NULL );
@@ -136,13 +139,14 @@ void printBits(size_t const size, void const * const ptr)
 }
 
 void temperatureTransmit_task(void* pvParameters) {
-	loRaWANSetup();
+	//loRaWANSetup();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 	
 	temperatureTransmitParams_t params = (temperatureTransmitParams_t) pvParameters;
 	SemaphoreHandle_t mutex = params->mutex;
 	sensorData_t sensorData = params->sensorData;
+	MessageBufferHandle_t downLinkMessageBufferHandle = params->messageBufferHandle;
 	temperatureTransmit_destroyParams(params);
 	
 	lora_driver_payload_t _uplink_payload;
@@ -168,5 +172,18 @@ void temperatureTransmit_task(void* pvParameters) {
 		// _uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
 
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
+		
+		lora_driver_payload_t downlinkPayload;
+		
+		xMessageBufferReceive(downLinkMessageBufferHandle, &downlinkPayload, sizeof(lora_driver_payload_t), portMAX_DELAY);
+		printf("DOWN LINK: from port: %d with %d bytes received!", downlinkPayload.portNo, downlinkPayload.len); // Just for Debug
+		if (4 == downlinkPayload.len) // Check that we have got the expected 4 bytes
+		{
+			char testString[4];
+			for (int i = 0; i < 4; i++) {
+				testString[i] = downlinkPayload.bytes[i];
+			}
+			printf("Message from downlink: %s", testString);
+		}
 	}
 }

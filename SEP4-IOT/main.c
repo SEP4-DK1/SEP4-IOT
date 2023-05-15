@@ -16,10 +16,11 @@
 #include "Tasks/DataCollection.h"
 
 SemaphoreHandle_t mutex;
+MessageBufferHandle_t downLinkMessageBufferHandle;
 sensorData_t sensorData;
 
 void createTasks(void) {
-	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData);
+	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData, downLinkMessageBufferHandle);
 	temperatureTransmit_createTask(3, (void*)temperatureTransmitParams);
 	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
 	dataCollection_createTask(2, (void*)dataCollectionParams);
@@ -36,7 +37,8 @@ void initialiseSystem(void) {
 	stdio_initialise(ser_USART0); // Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
-	lora_driver_initialise(ser_USART1, NULL);
+	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t)*2); // Space for 2 payloads
+	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
 
 	sensorData = sensorData_init();
 	runTaskSetups();
