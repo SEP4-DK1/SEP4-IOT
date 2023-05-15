@@ -13,27 +13,7 @@ extern "C" {
 
 FAKE_VOID_FUNC(LoRaWANUtil_setup);
 FAKE_VOID_FUNC(LoRaWANUtil_sendPayload, lora_driver_payload_t*);
-// FAKE_VOID_FUNC(lora_driver_resetRn2483,uint8_t);
-// FAKE_VOID_FUNC(lora_driver_flushBuffers);
-// FAKE_VOID_FUNC(status_leds_slowBlink,status_leds_t);
-// FAKE_VALUE_FUNC(char*, lora_driver_mapReturnCodeToText, lora_driver_returnCode_t);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_rn2483FactoryReset);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_configureToEu868);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_getRn2483Hweui,char*);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_setDeviceIdentifier,const char*);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_setOtaaIdentity, char*, char*, char*);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_saveMac);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_setAdaptiveDataRate, lora_driver_adaptiveDataRate_t);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_setReceiveDelay, uint16_t);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_join, lora_driver_joinMode_t);
-// FAKE_VALUE_FUNC(lora_driver_returnCode_t, lora_driver_sendUploadMessage, bool, lora_driver_payload_t*);
-// FAKE_VOID_FUNC(status_leds_longPuls, status_leds_t);
-// FAKE_VOID_FUNC(status_leds_ledOn, status_leds_t);
-// FAKE_VOID_FUNC(status_leds_ledOff, status_leds_t);
-// FAKE_VOID_FUNC(status_leds_fastBlink, status_leds_t);
-//FAKE_VALUE_FUNC(uint16_t,sensorData_getTemperatureAverage,sensorData_t);
-//FAKE_VOID_FUNC(loRaWANSetup);
-//FAKE_VOID_FUNC(taskYIELD);
+
 class TempTestFixture : public ::testing::Test
 {
 protected:
