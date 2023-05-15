@@ -19,7 +19,8 @@ SemaphoreHandle_t mutex;
 sensorData_t sensorData;
 
 void createTasks(void) {
-	temperatureTransmit_createTask(3, (void*)sensorData);
+	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData);
+	temperatureTransmit_createTask(3, (void*)temperatureTransmitParams);
 	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
 	dataCollection_createTask(2, (void*)dataCollectionParams);
 }

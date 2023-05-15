@@ -1,6 +1,7 @@
 #include "TemperatureTransmit.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <ATMEGA_FreeRTOS.h>
 #include <task.h>
 
@@ -94,6 +95,19 @@ static void loRaWANSetup(void) {
 	}
 }
 
+temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+	temperatureTransmitParams_t temperatureTransmitParams;
+	temperatureTransmitParams = malloc(sizeof(*temperatureTransmitParams));
+	temperatureTransmitParams->mutex = mutex;
+	temperatureTransmitParams->sensorData = sensorData;
+	return temperatureTransmitParams;
+}
+void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams) {
+	if (temperatureTransmitParams != NULL) {
+		free(temperatureTransmitParams);
+	}
+}
+
 void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		xTaskCreate(
 		temperatureTransmit_task
@@ -125,7 +139,11 @@ void temperatureTransmit_task(void* pvParameters) {
 	loRaWANSetup();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
-	sensorData_t sensorData = (sensorData_t) pvParameters;
+	
+	temperatureTransmitParams_t params = (temperatureTransmitParams_t) pvParameters;
+	SemaphoreHandle_t mutex = params->mutex;
+	sensorData_t sensorData = params->sensorData;
+	temperatureTransmit_destroyParams(params);
 	
 	lora_driver_payload_t _uplink_payload;
 	_uplink_payload.len = 2;
