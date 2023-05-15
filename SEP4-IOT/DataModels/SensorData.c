@@ -41,8 +41,8 @@ void sensorData_measure(sensorData_t data){
     if (temperature < 0) temperature = 0;
     if (temperature > 1023) temperature = 1023;
     data->totalTemperature += temperature;
-    uint16_t carbonDioxcide = mh_z19_getCo2Ppm(&carbonDioxcide);
-    data->totalCarbondioxide += carbonDioxcide;
+    uint16_t carbondioxcide = mh_z19_getCo2Ppm(&carbondioxcide);
+    data->totalCarbondioxide += carbondioxcide;
 
     data->counter++;
 }
