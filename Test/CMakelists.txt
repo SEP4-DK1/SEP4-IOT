@@ -20,11 +20,21 @@ FetchContent_MakeAvailable(googletest )
 
 set(SOURCES_TEST
     tests_SEP4-IOT.cpp
+    temperatureTransmitTest.cpp
     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
     ../SEP4-IOT/Tasks/DataCollection.c
+    ../SEP4-IOT/Tasks/TemperatureTransmit.c
     ../SEP4-IOT/DataModels/SensorData.c
     ${SRCS}
 )
+
+# set(TRANSMIT_SOURCES_TEST
+#     temperatureTransmitTest.cpp
+#     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
+#     ../SEP4-IOT/Tasks/TemperatureTransmit.c
+
+#     ${SRCS}
+# )
 
 # This makes the test.cpp files able to #include target libraries without errors.  
 include_directories(
@@ -32,6 +42,7 @@ include_directories(
   ../SEP4-IOT/Tasks
   ../SEP4-IOT/DataModels
   ../SEP4-IOT/drivers
+  ../SEP4-IOT/Util
 )
 
 # Something to 
