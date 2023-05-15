@@ -20,7 +20,8 @@ sensorData_t sensorData;
 
 void createTasks(void) {
 	temperatureTransmit_createTask(3, (void*)sensorData);
-	dataCollection_createTask(2, (void*)sensorData);
+	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
+	dataCollection_createTask(2, (void*)dataCollectionParams);
 }
 
 void runTaskSetups(void) {
