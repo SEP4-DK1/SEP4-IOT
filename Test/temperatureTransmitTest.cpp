@@ -59,7 +59,7 @@ TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
     sensorData_destroy(data);
 }
 
-TEST_F(TempTestFixture,testValueOfTTempInPayload){
+TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->counter=1;
@@ -68,5 +68,17 @@ TEST_F(TempTestFixture,testValueOfTTempInPayload){
 
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[0],(uint8_t) 154);
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[1] & 0b11000000,(uint8_t) 64);
+    sensorData_destroy(data);
+}
+
+TEST_F(TempTestFixture,testValueOfHumidityInPayload){
+    sensorData_t data = sensorData_init();
+    data->totalHumidity=100;
+    data->counter=1;
+    temperatureTransmit_taskInit(data);
+    temperatureTransmit_taskRun();
+
+    ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[1] & 0b00111111,(uint8_t) 36);
+    ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[2] & 0b10000000,(uint8_t) 128);
     sensorData_destroy(data);
 }
