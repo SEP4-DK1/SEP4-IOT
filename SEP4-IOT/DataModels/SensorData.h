@@ -3,9 +3,12 @@
 
 typedef struct sensorData
 {
-    uint16_t totalTemperature;
-    uint16_t totalHumidity;
-    uint16_t totalCarbondioxide;
+    uint16_t latestTemperature;
+    uint16_t latestHumidity;
+    uint16_t latestCarbondioxide;
+    uint32_t totalTemperature;
+    uint32_t totalHumidity;
+    uint32_t totalCarbondioxide;
     uint16_t counter;
 } * sensorData_t;
 
