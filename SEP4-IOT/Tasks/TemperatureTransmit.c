@@ -128,7 +128,7 @@ void temperatureTransmit_task(void* pvParameters) {
 	sensorData_t sensorData = (sensorData_t) pvParameters;
 	
 	lora_driver_payload_t _uplink_payload;
-	_uplink_payload.len = 2;
+	_uplink_payload.len = 4;
 	_uplink_payload.portNo = 1;
 
 	for(;;)
@@ -141,6 +141,7 @@ void temperatureTransmit_task(void* pvParameters) {
 		sensorData_reset(sensorData);
 		printf("Average Minute Temperature: %d\n", temperature);
 		printf("Average Minute Humidity: %d\n", humidity);
+		printf("Average Minute Co2: %d\n", carbondioxid);
 
 		// Clear payload bytes
 		for (int i = 0; i < _uplink_payload.len; i++) {
@@ -153,8 +154,8 @@ void temperatureTransmit_task(void* pvParameters) {
 		_uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
 		_uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
 
-		// _uplink_payload.bytes[2] |= ((char) ( carbondioxide >> 7)) & 0b01111111;
-		// _uplink_payload.bytes[3] |= ((char) ( carbondioxide >> 6)) & 0111111100;
+		_uplink_payload.bytes[2] |= ((char) ( carbondioxid >> 7)) & 0b01111111;
+		_uplink_payload.bytes[3] |= ((char) ( carbondioxid >> 6)) & 0111111100;
 		
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
