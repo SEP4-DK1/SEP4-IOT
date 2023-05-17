@@ -139,9 +139,9 @@ void temperatureTransmit_task(void* pvParameters) {
 		uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
 
 		sensorData_reset(sensorData);
-		printf("Average Minute Temperature: %d\n", temperature);
-		printf("Average Minute Humidity: %d\n", humidity);
-		printf("Average Minute Co2: %d\n", carbondioxid);
+		printf("Average Temperature: %d\n", temperature);
+		printf("Average Humidity: %d\n", humidity);
+		printf("Average Co2: %d\n", carbondioxid);
 
 		// Clear payload bytes
 		for (int i = 0; i < _uplink_payload.len; i++) {
