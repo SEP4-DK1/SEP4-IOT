@@ -156,6 +156,9 @@
     <Compile Include="DataModels\SensorData.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DataModels\SensorDefinitions.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\display_7seg.h">
       <SubType>compile</SubType>
     </Compile>

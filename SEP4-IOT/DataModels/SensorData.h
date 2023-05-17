@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "SensorDefinitions.h"
 
 typedef struct sensorData
 {
