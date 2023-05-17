@@ -121,7 +121,7 @@ void printBits(size_t const size, void const * const ptr)
     puts("");
 }
 
-void temperatureTransmit_task(void* pvParameters) {
+void temperatureTransmit_task(void* pvParameters) { 
 	loRaWANSetup();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
@@ -155,7 +155,7 @@ void temperatureTransmit_task(void* pvParameters) {
 		_uplink_payload.bytes[2] |= ((char) (humidity << 1)) & 0b10000000;
 
 		_uplink_payload.bytes[2] |= (char) (carbondioxid & 0b01111111);
-		_uplink_payload.bytes[3] |= (char) ((carbondioxid << 2) & 0b111111100);
+		_uplink_payload.bytes[3] |= (char) ((carbondioxid >> 6) & 0b11111100);
 		
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
