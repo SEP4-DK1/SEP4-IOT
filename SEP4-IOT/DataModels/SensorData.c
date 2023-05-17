@@ -39,7 +39,7 @@ void sensorData_measure(sensorData_t data){
     }
     vTaskDelay(pdMS_TO_TICKS(50UL));
     int16_t temperature = hih8120_getTemperature_x10();
-    uint16_t humidity = hih8120_getHumidityPercent_x10();
+    uint16_t humidity = hih8120_getHumidityPercent_x10()/10;
     uint16_t carbondioxcide;
     
     if (mh_z19_getCo2Ppm(&carbondioxcide) != MHZ19_OK){
@@ -51,7 +51,7 @@ void sensorData_measure(sensorData_t data){
     data->totalTemperature += temperature;
   
     if (humidity < 0) humidity = 0;
-    if (humidity > 100) humidity = 1000;
+    if (humidity > 100) humidity = 100;
     data->totalHumidity += humidity;
   
     data->totalCarbondioxide += carbondioxcide;
