@@ -151,11 +151,11 @@ void temperatureTransmit_task(void* pvParameters) {
 		_uplink_payload.bytes[0] = (char) temperature;
 		_uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
 
-		_uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
-		_uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
+		_uplink_payload.bytes[1] |= (char) (humidity & 0b00111111);
+		_uplink_payload.bytes[2] |= ((char) (humidity << 1)) & 0b10000000;
 
-		_uplink_payload.bytes[2] |= ((char) ( carbondioxid >> 7)) & 0b01111111;
-		_uplink_payload.bytes[3] |= ((char) ( carbondioxid >> 6)) & 0111111100;
+		_uplink_payload.bytes[2] |= (char) (carbondioxid & 0b01111111);
+		_uplink_payload.bytes[3] |= (char) ((carbondioxid << 2) & 0b111111100);
 		
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
