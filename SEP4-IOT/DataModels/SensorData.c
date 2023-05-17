@@ -51,7 +51,7 @@ void sensorData_measure(sensorData_t data){
     data->totalTemperature += temperature;
   
     if (humidity < 0) humidity = 0;
-    if (humidity < 100) humidity = 100;
+    if (humidity > 100) humidity = 1000;
     data->totalHumidity += humidity;
   
     data->totalCarbondioxide += carbondioxcide;
