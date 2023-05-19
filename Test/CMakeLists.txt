@@ -19,7 +19,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest )
 
 set(SOURCES_TEST
-    tests_SEP4-IOT.cpp
+    SensorDataTests.cpp
     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
     ../SEP4-IOT/Tasks/DataCollection.c
     ../SEP4-IOT/DataModels/SensorData.c
