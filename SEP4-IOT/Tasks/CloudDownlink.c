@@ -46,19 +46,22 @@ void cloudDownlink_task(void* pvParameters) {
 	MessageBufferHandle_t downLinkMessageBufferHandle = params->messageBufferHandle;
 	cloudDownlink_destroyParams(params);
 
-	for(;;)
-	{
+	for(;;) {
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		
 		lora_driver_payload_t downlinkPayload;
 		
 		printf("Receiving downlink...\n");
-		xMessageBufferReceive(downLinkMessageBufferHandle, &downlinkPayload, sizeof(lora_driver_payload_t), pdMS_TO_TICKS(10000));
-		printf("DOWN LINK: from port: %d with %d bytes received!\n", downlinkPayload.portNo, downlinkPayload.len); // Just for Debug
-		char testString[4];
-		for (int i = 0; i < 4; i++) {
-			testString[i] = downlinkPayload.bytes[i];
-		}
-		printf("Message from downlink: %s\n", testString);
+		if (xMessageBufferReceive(downLinkMessageBufferHandle, &downlinkPayload, sizeof(lora_driver_payload_t), pdMS_TO_TICKS(30000)) == 0) {
+      printf("Downlink failed...\n");
+    }
+    else {
+      printf("DOWN LINK: from port: %d with %d bytes received!\n", downlinkPayload.portNo, downlinkPayload.len); // Just for Debug
+      char testString[4];
+      for (int i = 0; i < 4; i++) {
+        testString[i] = downlinkPayload.bytes[i];
+      }
+      printf("Message from downlink: %s\n", testString);
+    }
 	}
 }
