@@ -3,6 +3,7 @@
 #include <hih8120.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "SensorDefinitions.h"
 
 #define TEMPERATURE_CALIBRATION -40
 
