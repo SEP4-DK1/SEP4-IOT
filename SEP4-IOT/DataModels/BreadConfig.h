@@ -4,6 +4,7 @@
 
 typedef struct breadConfig {
 	int16_t temperature;
+	int16_t humidity;
 } * breadConfig_t;
 
 breadConfig_t breadConfig_init();
