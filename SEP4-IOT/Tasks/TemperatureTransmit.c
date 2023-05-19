@@ -119,25 +119,8 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters
 		,  NULL );
 }
 
-// Test Helper Function (Move this somewhere else at some point!)
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char const *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-    
-    for (i = 0; i < size; i++) {
-        for (j = 7; j >= 0; j--) {
-            byte = (b[i] >> j) & 1;
-            printf("%u", byte);
-        }
-		printf(" ");
-    }
-    puts("");
-}
-
 void temperatureTransmit_task(void* pvParameters) {
-	//loRaWANSetup();
+	loRaWANSetup();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 	
