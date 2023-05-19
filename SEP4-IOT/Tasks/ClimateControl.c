@@ -26,22 +26,20 @@ void climateControl_createTask(UBaseType_t taskPriority, void* pvParameters){
 		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
 		,  NULL );
 }
+SemaphoreHandle_t mutex;
+sensorData_t sensorData;
+breadConfig_t breadConfig;
 
-void climateControl_task(void *pvParameters){
-	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(2000UL); // 2000ms = 2s
-	
+void climateControl_taskInit(void *pvParameters) {
 	climateControlParams_t params = (climateControlParams_t)pvParameters;
-	SemaphoreHandle_t mutex = params->mutex;
-	sensorData_t sensorData = params->sensorData;
-	breadConfig_t breadConfig = params->breadConfig;
+	mutex = params->mutex;
+	sensorData = params->sensorData;
+	breadConfig = params->breadConfig;
 	climateControl_destroyParams(params);
+}
 
-	for (;;)
-	{
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-
-    if (sensorData->latestTemperature = breadConfig->temperature) {
+void climateControl_taskRun(){
+	if (sensorData->latestTemperature = breadConfig->temperature) {
       // Turn up heater to 5% as a holding effect
     }
 	 else if (sensorData->latestTemperature < breadConfig->temperature - 300) {
@@ -65,11 +63,10 @@ void climateControl_task(void *pvParameters){
       //open ventilation
     }
 
-	/*
+	
 	if (sensorData->latestHumidity > breadConfig->humidity + 5) {
       // open ventilation 
     }
-
 	else if (sensorData->latestHumidity = breadConfig->humidity){
 		// Turn up heater to 5% as a holding effect
 	}
@@ -84,8 +81,16 @@ void climateControl_task(void *pvParameters){
 	  // in this link tells us what happens at the difrent consentrations of Co2 We agreed to keep it safe to the baker opening it. 
 	  // open ventilation 
     }
+}
 
-	*/
+void climateControl_task(void *pvParameters){
+	TickType_t xLastWakeTime = xTaskGetTickCount();
+	const TickType_t xFrequency = pdMS_TO_TICKS(2000UL); // 2000ms = 2s
+	climateControl_taskInit(pvParameters);
 
+	for (;;)
+	{
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		climateControl_taskRun();
 	}
 }
