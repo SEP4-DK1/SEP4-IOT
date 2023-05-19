@@ -300,6 +300,12 @@
     <Compile Include="FreeRTOS\src\variantHooks.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Tasks\CloudDownlink.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\CloudDownlink.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Tasks\DataCollection.c">
       <SubType>compile</SubType>
     </Compile>
