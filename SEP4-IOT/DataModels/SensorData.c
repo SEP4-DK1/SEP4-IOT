@@ -33,14 +33,15 @@ void sensorData_measure(sensorData_t data){
     if (hih8120_measure() != HIH8120_OK) {
         printf("ERROR: Measure HIH8120 failed\n");
     }
+    vTaskDelay(pdMS_TO_TICKS(1UL));
     if (mh_z19_takeMeassuring() != MHZ19_OK){
         printf("ERROR: Measure mh_z19 failed\n");
     }
-    
-    vTaskDelay(pdMS_TO_TICKS(1UL));
+    vTaskDelay(pdMS_TO_TICKS(50UL));
     int16_t temperature = hih8120_getTemperature_x10();
-    uint16_t humidity = hih8120_getHumidityPercent_x10();
+    uint16_t humidity = hih8120_getHumidityPercent_x10()/10;
     uint16_t carbondioxcide;
+    
     if (mh_z19_getCo2Ppm(&carbondioxcide) != MHZ19_OK){
         printf("ERROR: GetCo2Ppm failed\n");
     }
