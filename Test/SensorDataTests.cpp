@@ -19,7 +19,7 @@ FAKE_VALUE_FUNC(mh_z19_returnCode_t, mh_z19_takeMeassuring);
 FAKE_VALUE_FUNC(mh_z19_returnCode_t, mh_z19_getCo2Ppm, uint16_t*);
 
 // Create Test fixture and Reset all Mocks before each test
-class Test_fixture : public ::testing::Test
+class SensorDataTestFixture : public ::testing::Test
 {
 protected:
 	void SetUp() override
@@ -35,7 +35,7 @@ protected:
 	{}
 };
 
-TEST_F(Test_fixture, Test_sensorDataMeasureTemperature)
+TEST_F(SensorDataTestFixture, TestSensorDataMeasureTemperatureReturnsKnownValue)
 {
 	// Create sensorData struct
 	sensorData_t data = sensorData_init();
@@ -56,7 +56,7 @@ TEST_F(Test_fixture, Test_sensorDataMeasureTemperature)
 	sensorData_destroy(data);
 }
 
-TEST_F(Test_fixture, Test_sensorDataMeasureHumidity)
+TEST_F(SensorDataTestFixture, TestSensorDataMeasureHumidityReturnsKnownValue)
 {
     // Create sensorData struct
     sensorData_t data = sensorData_init();
@@ -75,7 +75,7 @@ TEST_F(Test_fixture, Test_sensorDataMeasureHumidity)
     sensorData_destroy(data);
 }
 
-TEST_F(Test_fixture, Test_sensorDataMeasureCo2)
+TEST_F(SensorDataTestFixture, TestSensorDataMeasureCo2ReturnsKnownValue)
 {
     // Create sensorData struct
     sensorData_t data = sensorData_init();
@@ -99,7 +99,7 @@ TEST_F(Test_fixture, Test_sensorDataMeasureCo2)
     sensorData_destroy(data);
 }
 
-TEST_F(Test_fixture, Test_sensorDataTemperatureAverage)
+TEST_F(SensorDataTestFixture, TestSensorDataTemperatureAverageCalculatesRightValue)
 {
 	// Create sensorData struct and set initial values
 	sensorData_t data = sensorData_init();
@@ -116,7 +116,7 @@ TEST_F(Test_fixture, Test_sensorDataTemperatureAverage)
 	sensorData_destroy(data);
 }
 
-TEST_F(Test_fixture, Test_sensorDataReset)
+TEST_F(SensorDataTestFixture, TestSensorDataResetClearsAndResetsToEmpty)
 {
 	// Create sensorData struct and set initial values
 	sensorData_t data = sensorData_init();
@@ -138,7 +138,7 @@ TEST_F(Test_fixture, Test_sensorDataReset)
 	sensorData_destroy(data);
 }
 
-TEST_F(Test_fixture, Test_sensorDataHumidityAverage)
+TEST_F(SensorDataTestFixture, TestSensorDataHumidityAverageCalculatesRightValue)
 {
 	// Create sensorData struct and set initial values
 	sensorData_t data = sensorData_init();
@@ -155,7 +155,7 @@ TEST_F(Test_fixture, Test_sensorDataHumidityAverage)
 	sensorData_destroy(data);
 }
 
-TEST_F(Test_fixture, Test_sensorDataCarbondioxideAverage)
+TEST_F(SensorDataTestFixture, TestSensorDataCarbondioxideAverageCalculatesRightValue)
 {
 	// Create sensorData struct and set initial values
 	sensorData_t data = sensorData_init();
