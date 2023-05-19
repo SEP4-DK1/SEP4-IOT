@@ -14,7 +14,8 @@ extern "C"
 // Declare FFF mocks for the production code functions
 FAKE_VALUE_FUNC(hih8120_driverReturnCode_t, hih8120_measure);
 FAKE_VALUE_FUNC(hih8120_driverReturnCode_t, hih8120_wakeup);
-FAKE_VALUE_FUNC(uint16_t, hih8120_getTemperature_x10);
+FAKE_VALUE_FUNC(int16_t, hih8120_getTemperature_x10);
+FAKE_VALUE_FUNC(uint16_t, hih8120_getHumidityPercent_x10);
 FAKE_VALUE_FUNC(mh_z19_returnCode_t, mh_z19_takeMeassuring);
 FAKE_VALUE_FUNC(mh_z19_returnCode_t, mh_z19_getCo2Ppm, uint16_t*);
 
