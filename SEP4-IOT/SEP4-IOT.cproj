@@ -147,6 +147,15 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Config\LoraWAN_Config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataModels\SensorData.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataModels\SensorData.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\display_7seg.h">
       <SubType>compile</SubType>
     </Compile>
@@ -288,6 +297,18 @@
     <Compile Include="FreeRTOS\src\variantHooks.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Tasks\DataCollection.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\DataCollection.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\TemperatureTransmit.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\TemperatureTransmit.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\" />
@@ -296,8 +317,15 @@
     <Folder Include="FreeRTOS\Example\" />
     <Folder Include="FreeRTOS\FreeRTOSTraceDriver\" />
     <Folder Include="FreeRTOS\src\" />
+    <Folder Include="Config" />
+    <Folder Include="DataModels" />
+    <Folder Include="PlantUML" />
+    <Folder Include="Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Config\LoraWAN_Config_Template.txt">
+      <SubType>compile</SubType>
+    </None>
     <None Include="drivers\.git">
       <SubType>compile</SubType>
     </None>
@@ -349,9 +377,6 @@
     <None Include="FreeRTOS\src\LICENSE.md">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="LoRaWANHandler.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

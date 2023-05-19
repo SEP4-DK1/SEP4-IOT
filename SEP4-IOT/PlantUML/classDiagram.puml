@@ -1,0 +1,68 @@
+@startuml ClassDiagram
+namespace SEP4IOT #LightYellow {
+    class main {
+        {field} SemaphoreHandle_t mutex
+        {field} sensorData_t sensorData
+        {method} createTasks(void)
+        {method} void initialiseSystem(void)
+        {method} int main(void)
+    }
+
+    namespace DataModels #LightCyan {
+        interface ISensorData #Pink {
+            {method} sensorData_t sensorData_init()
+            {method} void sensorData_destroy()
+            {method} void sensorData_measure(sensorData_t data)
+            {method} void sensorData_reset(sensorData_t data)
+            {method} uint16_t sensorData_getTemperatureAverage(sensorData_t data)
+            {method} uint16_t sensorData_getHumidityAverage(sensorData_t data)
+            {method} uint16_t sensorData_getCarbondioxideAverage(sensorData_t data)
+        }
+        
+        class SensorData {
+            {field} uint16_t totalTemperature
+            {field} uint16_t totalHumidity
+            {field} uint16_t totalCarbondioxide
+            {field} uint16_t counter
+            {method} sensorData_t sensorData_init()
+            {method} void sensorData_destroy()
+            {method} void sensorData_measure(sensorData_t data)
+            {method} void sensorData_reset(sensorData_t data)
+            {method} uint16_t sensorData_getTemperatureAverage(sensorData_t data)
+            {method} uint16_t sensorData_getHumidityAverage(sensorData_t data)
+            {method} uint16_t sensorData_getCarbondioxideAverage(sensorData_t data)
+        }
+        ISensorData <|-- SensorData
+    }
+    namespace Tasks #LightSkyBlue {
+        interface IDataCollection #Pink {
+            {method} void dataCollection_createTask(UBaseType_t taskPriority, void* pvParameters)
+            {method} void dataCollection_task(void *pvParameters)
+        }
+
+        class DataCollection{
+            {method} void dataCollection_createTask(UBaseType_t taskPriority, void* pvParameters)
+            {method} void dataCollection_task(void *pvParameters)
+        }
+
+        interface ITemperatureTrasmit #Pink {
+            {method} void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters)
+            {method} void temperatureTransmit_task(void *pvParameters)
+        }
+
+        class TemperatureTrasmit {
+            {method} void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters)
+            {method} void temperatureTransmit_task(void *pvParameters)
+            {method} void loRaWANSetup(void)
+        }
+
+        ITemperatureTrasmit <|-- TemperatureTrasmit
+        IDataCollection <|-- DataCollection
+    }
+
+    SEP4IOT.main ..> SEP4IOT.Tasks.ITemperatureTrasmit
+    SEP4IOT.main ..> SEP4IOT.Tasks.IDataCollection
+    SEP4IOT.Tasks.TemperatureTrasmit --> SEP4IOT.DataModels.ISensorData
+    SEP4IOT.Tasks.DataCollection --> SEP4IOT.DataModels.ISensorData
+}
+@enduml

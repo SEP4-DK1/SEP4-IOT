@@ -1,2 +1,6 @@
 .vs
+.vscode
 [Dd]ebug/
+[Bb]uild
+
+/SEP4-IOT/Config/LoraWAN_Config.h

@@ -1,38 +1,26 @@
-/*
-* loraWANHandler.c
-*
-* Created: 12/04/2019 10:09:05
-*  Author: IHA
-*/
-#include <stddef.h>
+#include "TemperatureTransmit.h"
 #include <stdio.h>
-
+#include <stdint.h>
 #include <ATMEGA_FreeRTOS.h>
+#include <task.h>
 
+#include "../Config/LoraWAN_Config.h"
 #include <lora_driver.h>
 #include <status_leds.h>
+#include <hih8120.h>
 
-// Parameters for OTAA join - You have got these in a mail from IHA
-#define LORA_appEUI "2E20554EE0BE7265"
-#define LORA_appKEY "D951DC87A928E70B1C2EDD116E87352F"
+#include "../DataModels/SensorData.h"
 
-void lora_handler_task( void *pvParameters );
+static void loRaWANSetup(void) {
+	// Hardware reset of LoRaWAN transceiver
+	lora_driver_resetRn2483(1);
+	vTaskDelay(2);
+	lora_driver_resetRn2483(0);
+	// Give it a chance to wakeup
+	vTaskDelay(150);
 
-static lora_driver_payload_t _uplink_payload;
+	lora_driver_flushBuffers(); // get rid of first version string from module after reset!
 
-void lora_handler_initialise(UBaseType_t lora_handler_task_priority)
-{
-	xTaskCreate(
-	lora_handler_task
-	,  "LRHand"  // A name just for humans
-	,  configMINIMAL_STACK_SIZE+200  // This stack size can be checked & adjusted by reading the Stack Highwater
-	,  NULL
-	,  lora_handler_task_priority  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-	,  NULL );
-}
-
-static void _lora_setup(void)
-{
 	char _out_buf[20];
 	lora_driver_returnCode_t rc;
 	status_leds_slowBlink(led_ST2); // OPTIONAL: Led the green led blink slowly while we are setting up LoRa
@@ -87,6 +75,7 @@ static void _lora_setup(void)
 		// Connected to LoRaWAN :-)
 		// Make the green led steady
 		status_leds_ledOn(led_ST2); // OPTIONAL
+		printf("Successfully connected to LoRaWAN\n");
 	}
 	else
 	{
@@ -95,6 +84,7 @@ static void _lora_setup(void)
 		status_leds_ledOff(led_ST2); // OPTIONAL
 		// Make the red led blink fast to tell something went wrong
 		status_leds_fastBlink(led_ST1); // OPTIONAL
+		printf("Could not connect to LoRaWAN");
 
 		// Lets stay here
 		while (1)
@@ -104,44 +94,68 @@ static void _lora_setup(void)
 	}
 }
 
-/*-----------------------------------------------------------*/
-void lora_handler_task( void *pvParameters )
+void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters) {
+		xTaskCreate(
+		temperatureTransmit_task
+		,  "Temperature Transmit Task"
+		,  configMINIMAL_STACK_SIZE+100
+		,  pvParameters
+		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
+		,  NULL );
+}
+
+// Test Helper Function (Move this somewhere else at some point!)
+void printBits(size_t const size, void const * const ptr)
 {
-	// Hardware reset of LoRaWAN transceiver
-	lora_driver_resetRn2483(1);
-	vTaskDelay(2);
-	lora_driver_resetRn2483(0);
-	// Give it a chance to wakeup
-	vTaskDelay(150);
+    unsigned char const *b = (unsigned char*) ptr;
+    unsigned char byte;
+    int i, j;
+    
+    for (i = 0; i < size; i++) {
+        for (j = 7; j >= 0; j--) {
+            byte = (b[i] >> j) & 1;
+            printf("%u", byte);
+        }
+		printf(" ");
+    }
+    puts("");
+}
 
-	lora_driver_flushBuffers(); // get rid of first version string from module after reset!
-
-	_lora_setup();
-
-	_uplink_payload.len = 6;
-	_uplink_payload.portNo = 2;
-
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = pdMS_TO_TICKS(30000UL); // Upload message every 5 minutes (300000 ms)
-	xLastWakeTime = xTaskGetTickCount();
+void temperatureTransmit_task(void* pvParameters) {
+	loRaWANSetup();
+	TickType_t xLastWakeTime = xTaskGetTickCount();
+	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
+	sensorData_t sensorData = (sensorData_t) pvParameters;
 	
+	lora_driver_payload_t _uplink_payload;
+	_uplink_payload.len = 2;
+	_uplink_payload.portNo = 1;
+
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
+		uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
+		uint16_t humidity = sensorData_getHumidityAverage(sensorData);
+		uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
 
-		// Some dummy payload
-		uint16_t hum = 12345; // Dummy humidity
-		int16_t temp = 675; // Dummy temp
-		uint16_t co2_ppm = 1050; // Dummy CO2
+		sensorData_reset(sensorData);
+		printf("Average Minute Temperature: %d\n", temperature);
+		printf("Average Minute Humidity: %d\n", humidity);
 
-		_uplink_payload.bytes[0] = hum >> 8;
-		_uplink_payload.bytes[1] = hum & 0xFF;
-		_uplink_payload.bytes[2] = temp >> 8;
-		_uplink_payload.bytes[3] = temp & 0xFF;
-		_uplink_payload.bytes[4] = co2_ppm >> 8;
-		_uplink_payload.bytes[5] = co2_ppm & 0xFF;
+		// Clear payload bytes
+		for (int i = 0; i < _uplink_payload.len; i++) {
+			_uplink_payload.bytes[i] = 0;
+		}
+		
+		_uplink_payload.bytes[0] = (char) temperature;
+		_uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
 
-		status_leds_shortPuls(led_ST4);  // OPTIONAL
+		_uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
+		_uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
+
+		// _uplink_payload.bytes[2] |= ((char) ( carbondioxide >> 7)) & 0b01111111;
+		// _uplink_payload.bytes[3] |= ((char) ( carbondioxide >> 6)) & 0111111100;
+		
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
 }
