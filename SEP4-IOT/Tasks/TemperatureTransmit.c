@@ -121,22 +121,27 @@ void printBits(size_t const size, void const * const ptr)
     puts("");
 }
 
-void temperatureTransmit_task(void* pvParameters) {
+void temperatureTransmit_task(void* pvParameters) { 
 	loRaWANSetup();
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 	sensorData_t sensorData = (sensorData_t) pvParameters;
 	
 	lora_driver_payload_t _uplink_payload;
-	_uplink_payload.len = 2;
+	_uplink_payload.len = 4;
 	_uplink_payload.portNo = 1;
 
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 		uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
+		uint16_t humidity = sensorData_getHumidityAverage(sensorData);
+		uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
+
 		sensorData_reset(sensorData);
-		printf("Average Minute Temperature: %d\n", temperature);
+		printf("Average Temperature: %d\n", temperature);
+		printf("Average Humidity: %d\n", humidity);
+		printf("Average Co2: %d\n", carbondioxid);
 
 		// Clear payload bytes
 		for (int i = 0; i < _uplink_payload.len; i++) {
@@ -146,9 +151,12 @@ void temperatureTransmit_task(void* pvParameters) {
 		_uplink_payload.bytes[0] = (char) temperature;
 		_uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
 
-		// _uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
-		// _uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
+		_uplink_payload.bytes[1] |= (char) (humidity & 0b00111111);
+		_uplink_payload.bytes[2] |= ((char) (humidity << 1)) & 0b10000000;
 
+		_uplink_payload.bytes[2] |= (char) (carbondioxid & 0b01111111);
+		_uplink_payload.bytes[3] |= (char) ((carbondioxid >> 6) & 0b11111100);
+		
 		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
 	}
 }

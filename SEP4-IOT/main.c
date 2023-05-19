@@ -10,6 +10,7 @@
 #include <lora_driver.h>
 #include <status_leds.h>
 #include <hih8120.h>
+#include <mh_z19.h>
 
 #include "DataModels/SensorData.h"
 #include "Tasks/TemperatureTransmit.h"
@@ -34,6 +35,7 @@ void initialiseSystem(void) {
 	stdio_initialise(ser_USART0); // Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
+	mh_z19_initialise(ser_USART3); // This port is taken from the documentation (https://ihavn.github.io/IoT_Semester_project/mh_z19_driver_quick_start.html#mh_z19_use_cases)
 	lora_driver_initialise(ser_USART1, NULL);
 
 	sensorData = sensorData_init();
