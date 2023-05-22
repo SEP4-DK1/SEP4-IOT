@@ -39,7 +39,8 @@ void climateControl_taskInit(void *pvParameters) {
 }
 
 void climateControl_taskRun(){
-	 if (sensorData->latestTemperature - breadConfig->temperature = 50 || -50 && sensorData->latestHumidity - breadConfig->humidity = 50 || -50) {
+	breadConfig->temperature = 60;
+	 if (sensorData->latestTemperature - breadConfig->temperature == 50 /*|| -50*/ && sensorData->latestHumidity - breadConfig->humidity == 50/* || -50*/) {
       // Turn up heater to 5% as a holding effect
 	  rc_servo_setPosition(0, -95);
     }
@@ -78,14 +79,13 @@ void climateControl_taskRun(){
 
 	else if (sensorData->latestHumidity < breadConfig->humidity - 50){
 		// Turn up heater 100% for 3 sec
-		const TickType_t xFrequency = pdMS_TO_TICKS(3000UL); 
 		rc_servo_setPosition(0, 100);
-		xTaskDelayUntil(xFrequency );
+		vTaskDelay(pdMS_TO_TICKS(3000L));
 
 		rc_servo_setPosition(0, -95);
 	}
 
-	if (sensorData->latestCo2 =< 2500) {
+	if (sensorData->latestCarbondioxide <= 2500) {
       // we will set 2500ppm as our maxvalue, 
 	  // https://www.canada.ca/en/health-canada/programs/consultation-residential-indoor-air-quality-guidelines-carbon-dioxide/document.html#:~:text=of%20this%20assessment.-,Figure%201.%20Comparison%20of%20CO2%20concentrations%20in%20Canadian%20homes%20to%20CO2%20concentrations%20associated%20with%20health,-effects
 	  // in this link tells us what happens at the difrent consentrations of Co2 We agreed to keep it safe to the baker opening it. 
@@ -98,6 +98,7 @@ void climateControl_task(void *pvParameters){
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(2000UL); // 2000ms = 2s
 	climateControl_taskInit(pvParameters);
+	printf("Climate control task started\n");
 
 	for (;;)
 	{

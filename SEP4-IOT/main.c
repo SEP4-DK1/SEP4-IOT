@@ -12,18 +12,22 @@
 #include <hih8120.h>
 
 #include "DataModels/SensorData.h"
+#include "DataModels/BreadConfig.h"
 #include "Tasks/TemperatureTransmit.h"
 #include "Tasks/DataCollection.h"
+#include "Tasks/ClimateControl.h"
 
 SemaphoreHandle_t mutex;
 MessageBufferHandle_t downLinkMessageBufferHandle;
 sensorData_t sensorData;
+breadConfig_t breadConfig;
 
 void createTasks(void) {
 	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData, downLinkMessageBufferHandle);
 	temperatureTransmit_createTask(3, (void*)temperatureTransmitParams);
 	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
 	dataCollection_createTask(2, (void*)dataCollectionParams);
+	climateControlParams_t climateControlParams = climateControl_createParams(mutex, sensorData, breadConfig);
 }
 
 void runTaskSetups(void) {
@@ -41,6 +45,7 @@ void initialiseSystem(void) {
 	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
 
 	sensorData = sensorData_init();
+	breadConfig = breadConfig_init();
 	runTaskSetups();
 	createTasks();
 }

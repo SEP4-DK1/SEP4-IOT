@@ -150,6 +150,12 @@
     <Compile Include="Config\LoraWAN_Config.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DataModels\BreadConfig.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataModels\BreadConfig.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="DataModels\SensorData.c">
       <SubType>compile</SubType>
     </Compile>
@@ -295,6 +301,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="FreeRTOS\src\variantHooks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\ClimateControl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\ClimateControl.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Tasks\DataCollection.c">
