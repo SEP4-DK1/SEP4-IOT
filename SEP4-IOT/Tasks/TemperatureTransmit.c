@@ -46,8 +46,6 @@ inline void temperatureTransmit_taskInit(void* pvParameters) {
 	mutex = params->mutex;
 	sensorData = params->sensorData;
 	temperatureTransmit_destroyParams(params);
-  
-	sensorData = (sensorData_t) pvParameters;
 
 	_uplink_payload.len = 4;
 	_uplink_payload.portNo = 1;
@@ -75,7 +73,7 @@ inline void temperatureTransmit_taskRun() {
 	_uplink_payload.bytes[2] |= ((char) (humidity << 1)) & 0b10000000;
 
 	_uplink_payload.bytes[2] |= (char) (carbondioxid & 0b01111111);
-	_uplink_payload.bytes[3] |= (char) ((carbondioxid >> 6) & 0b11111100);
+	_uplink_payload.bytes[3] |= (char) ((carbondioxid >> 5) & 0b11111100);
 	
   LoRaWANUtil_sendPayload(&_uplink_payload);
 }
