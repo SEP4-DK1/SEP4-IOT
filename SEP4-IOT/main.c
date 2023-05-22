@@ -12,6 +12,7 @@
 #include <hih8120.h>
 
 #include "DataModels/SensorData.h"
+#include "DataModels/BreadConfig.h"
 #include "Tasks/TemperatureTransmit.h"
 #include "Tasks/CloudDownlink.h"
 #include "Tasks/DataCollection.h"
@@ -20,11 +21,12 @@
 SemaphoreHandle_t mutex;
 MessageBufferHandle_t downLinkMessageBufferHandle;
 sensorData_t sensorData;
+breadConfig_t breadConfig;
 
 void createTasks(void) {
 	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData);
 	temperatureTransmit_createTask(4, (void*)temperatureTransmitParams);
-	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(mutex, downLinkMessageBufferHandle);
+	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(mutex, downLinkMessageBufferHandle, breadConfig);
 	cloudDownlink_createTask(3, (void*)cloudDownlinkParams);
 	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
 	dataCollection_createTask(2, (void*)dataCollectionParams);

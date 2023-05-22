@@ -150,6 +150,12 @@
     <Compile Include="Config\LoraWAN_Config.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DataModels\BreadConfig.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataModels\BreadConfig.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="DataModels\SensorData.c">
       <SubType>compile</SubType>
     </Compile>
