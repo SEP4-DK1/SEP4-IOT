@@ -20,8 +20,10 @@ FetchContent_MakeAvailable(googletest )
 
 set(SOURCES_TEST
     SensorDataTests.cpp
+    temperatureTransmitTest.cpp
     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
     ../SEP4-IOT/Tasks/DataCollection.c
+    ../SEP4-IOT/Tasks/TemperatureTransmit.c
     ../SEP4-IOT/DataModels/SensorData.c
     ${SRCS}
 )
@@ -32,6 +34,7 @@ include_directories(
   ../SEP4-IOT/Tasks
   ../SEP4-IOT/DataModels
   ../SEP4-IOT/drivers
+  ../SEP4-IOT/Util
 )
 
 # Something to 

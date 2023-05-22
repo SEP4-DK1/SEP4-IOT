@@ -324,6 +324,12 @@
     <Compile Include="Tasks\TemperatureTransmit.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Util\LoRaWANUtil.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Util\LoRaWANUtil.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\" />
@@ -336,6 +342,7 @@
     <Folder Include="DataModels" />
     <Folder Include="PlantUML" />
     <Folder Include="Tasks" />
+    <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\LoraWAN_Config_Template.txt">

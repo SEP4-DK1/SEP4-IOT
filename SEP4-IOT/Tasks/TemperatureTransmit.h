@@ -12,3 +12,6 @@ temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t m
 void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams);
 void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters);
 void temperatureTransmit_task(void *pvParameters);
+
+void temperatureTransmit_taskInit(void* pvParameters);
+void temperatureTransmit_taskRun();
