@@ -1,6 +1,7 @@
 #include "SensorData.h"
 #include <ATMEGA_FreeRTOS.h>
 #include <hih8120.h>
+#include <mh_z19.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -32,11 +33,29 @@ void sensorData_measure(sensorData_t data){
         printf("ERROR: Measure HIH8120 failed\n");
     }
     vTaskDelay(pdMS_TO_TICKS(1UL));
+    if (mh_z19_takeMeassuring() != MHZ19_OK){
+        printf("ERROR: Measure mh_z19 failed\n");
+    }
+    vTaskDelay(pdMS_TO_TICKS(50UL));
     int16_t temperature = hih8120_getTemperature_x10() + TEMPERATURE_OFFSET + TEMPERATURE_CALIBRATION;
+    uint16_t humidity = hih8120_getHumidityPercent_x10()/10;
+    uint16_t carbondioxcide;
+    
+    if (mh_z19_getCo2Ppm(&carbondioxcide) != MHZ19_OK){
+        printf("ERROR: GetCo2Ppm failed\n");
+    }
+  
     if (temperature < 0) temperature = 0;
     if (temperature > 1023) temperature = 1023;
     data->latestTemperature = temperature;
     data->totalTemperature += temperature;
+  
+    if (humidity < 0) humidity = 0;
+    if (humidity > 100) humidity = 100;
+    data->totalHumidity += humidity;
+  
+    data->totalCarbondioxide += carbondioxcide;
+    
     data->counter++;
 }
 
