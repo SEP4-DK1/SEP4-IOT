@@ -33,7 +33,10 @@ protected:
 
 TEST_F(TempTestFixture, testInit){
     sensorData_t data = sensorData_init();
-    temperatureTransmit_taskInit(data);
+    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
+    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    
+    temperatureTransmit_taskInit(params);
     sensorData_destroy(data);
     ASSERT_EQ(1,1);
 }
@@ -42,7 +45,11 @@ TEST_F(TempTestFixture, testrun){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->counter=1;
-    temperatureTransmit_taskInit(data);
+
+    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
+    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    
+    temperatureTransmit_taskInit(params);
     temperatureTransmit_taskRun();
     sensorData_destroy(data);
 }
@@ -51,7 +58,11 @@ TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->counter=1;
-    temperatureTransmit_taskInit(data);
+
+    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
+    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    
+    temperatureTransmit_taskInit(params);
     temperatureTransmit_taskRun();
 
     ASSERT_EQ(data->totalTemperature,0);
@@ -63,10 +74,14 @@ TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->counter=1;
-    temperatureTransmit_taskInit(data);
+
+    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
+    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    
+    temperatureTransmit_taskInit(params);
     temperatureTransmit_taskRun();
 
-    ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[0],(uint8_t) 154);
+    ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[0],(uint8_t) 194);
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[1] & 0b11000000,(uint8_t) 64);
     sensorData_destroy(data);
 }
@@ -75,7 +90,11 @@ TEST_F(TempTestFixture,testValueOfHumidityInPayload){
     sensorData_t data = sensorData_init();
     data->totalHumidity=100;
     data->counter=1;
-    temperatureTransmit_taskInit(data);
+
+    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
+    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    
+    temperatureTransmit_taskInit(params);
     temperatureTransmit_taskRun();
 
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[1] & 0b00111111,(uint8_t) 36);
@@ -85,9 +104,13 @@ TEST_F(TempTestFixture,testValueOfHumidityInPayload){
 
 TEST_F(TempTestFixture,testValueOfCO2InPayload){
     sensorData_t data = sensorData_init();
-    data->totalHumidity=4965;
+    data->totalCarbondioxide=4965;
     data->counter=1;
-    temperatureTransmit_taskInit(data);
+
+    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
+    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    
+    temperatureTransmit_taskInit(params);
     temperatureTransmit_taskRun();
 
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[2] & 0b01111111,(uint8_t) 101);
