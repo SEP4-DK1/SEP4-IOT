@@ -35,7 +35,7 @@ void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters
 		,  NULL );
 }
 
-SemaphoreHandle_t mutex
+SemaphoreHandle_t mutex;
 lora_driver_payload_t _uplink_payload;
 sensorData_t sensorData;
 
