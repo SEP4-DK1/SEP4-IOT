@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "SensorDefinitions.h"
+#define TEMPERATURE_CALIBRATION -40
 
 typedef struct sensorData
 {

@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TEMPERATURE_CALIBRATION -40
-
 sensorData_t sensorData_init() {
     sensorData_t data; 
     data = malloc(sizeof(*data));
