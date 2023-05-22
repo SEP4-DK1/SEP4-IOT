@@ -49,7 +49,7 @@ TEST_F(SensorDataTestFixture, TestSensorDataMeasureTemperatureReturnsKnownValue)
 	sensorData_measure(data);
 
 	// Check that the values have been updated correctly
-	ASSERT_EQ(data->totalTemperature, 250);
+	ASSERT_EQ(data->totalTemperature, 250 + TEMPERATURE_OFFSET + TEMPERATURE_CALIBRATION);
 	ASSERT_EQ(data->counter, 1);
 
 	// Clean up
@@ -110,7 +110,7 @@ TEST_F(SensorDataTestFixture, TestSensorDataTemperatureAverageCalculatesRightVal
 	uint16_t average = sensorData_getTemperatureAverage(data);
 
 	// Check that the average is calculated correctly
-	ASSERT_EQ(average, 1000-40);
+	ASSERT_EQ(average, 1000);
 
 	// Clean up
 	sensorData_destroy(data);

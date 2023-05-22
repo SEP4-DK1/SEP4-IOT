@@ -35,34 +35,48 @@ namespace SEP4IOT #LightYellow {
         ISensorData <|-- SensorData
     }
     namespace Tasks #LightSkyBlue {
+
         interface IDataCollection #Pink {
+            {method} dataCollectionParams_t dataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
+            {method} void dataCollection_destroyParams(dataCollectionParams_t dataCollectionParams)
             {method} void dataCollection_createTask(UBaseType_t taskPriority, void* pvParameters)
             {method} void dataCollection_task(void *pvParameters)
         }
 
         class DataCollection{
+            {field} SemaphoreHandle_t mutex
+            {field} sensorData_t sensorData
+            {method} dataCollectionParams_t dataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
+            {method} void dataCollection_destroyParams(dataCollectionParams_t dataCollectionParams)
             {method} void dataCollection_createTask(UBaseType_t taskPriority, void* pvParameters)
             {method} void dataCollection_task(void *pvParameters)
         }
 
-        interface ITemperatureTrasmit #Pink {
+        interface ITemperatureTransmit #Pink {
+            {method} temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData, MessageBufferHandle_t messageBufferHandle)
+            {method} void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams)
             {method} void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters)
             {method} void temperatureTransmit_task(void *pvParameters)
         }
 
-        class TemperatureTrasmit {
+        class TemperatureTransmit {
+            {field} SemaphoreHandle_t mutex
+            {field} sensorData_t sensorData
+            {field} MessageBufferHandle_t messageBufferHandle
+            {method} temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData, MessageBufferHandle_t messageBufferHandle)
+            {method} void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams)
             {method} void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters)
             {method} void temperatureTransmit_task(void *pvParameters)
             {method} void loRaWANSetup(void)
         }
 
-        ITemperatureTrasmit <|-- TemperatureTrasmit
+        ITemperatureTransmit <|-- TemperatureTransmit
         IDataCollection <|-- DataCollection
     }
 
-    SEP4IOT.main ..> SEP4IOT.Tasks.ITemperatureTrasmit
+    SEP4IOT.main ..> SEP4IOT.Tasks.ITemperatureTransmit
     SEP4IOT.main ..> SEP4IOT.Tasks.IDataCollection
-    SEP4IOT.Tasks.TemperatureTrasmit --> SEP4IOT.DataModels.ISensorData
+    SEP4IOT.Tasks.TemperatureTransmit --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.DataCollection --> SEP4IOT.DataModels.ISensorData
 }
 @enduml

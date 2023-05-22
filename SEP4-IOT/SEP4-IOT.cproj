@@ -150,10 +150,19 @@
     <Compile Include="Config\LoraWAN_Config.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DataModels\BreadConfig.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataModels\BreadConfig.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="DataModels\SensorData.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="DataModels\SensorData.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataModels\SensorDefinitions.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="drivers\display_7seg.h">
@@ -295,6 +304,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="FreeRTOS\src\variantHooks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\CloudDownlink.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\CloudDownlink.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Tasks\DataCollection.c">

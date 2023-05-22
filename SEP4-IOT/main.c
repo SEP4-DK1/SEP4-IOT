@@ -13,19 +13,24 @@
 #include <mh_z19.h>
 
 #include "DataModels/SensorData.h"
+#include "DataModels/BreadConfig.h"
 #include "Tasks/TemperatureTransmit.h"
+#include "Tasks/CloudDownlink.h"
 #include "Tasks/DataCollection.h"
+#include "Config/LoraWAN_Config.h"
 
 SemaphoreHandle_t mutex;
+MessageBufferHandle_t downLinkMessageBufferHandle;
 sensorData_t sensorData;
+breadConfig_t breadConfig;
 
 void createTasks(void) {
-	temperatureTransmit_createTask(3, (void*)sensorData);
-	dataCollection_createTask(2, (void*)sensorData);
-}
-
-void runTaskSetups(void) {
-	// runTaskSetups function might not be useful, but it's kept for now
+	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData);
+	temperatureTransmit_createTask(4, (void*)temperatureTransmitParams);
+	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(mutex, downLinkMessageBufferHandle, breadConfig);
+	cloudDownlink_createTask(3, (void*)cloudDownlinkParams);
+	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
+	dataCollection_createTask(2, (void*)dataCollectionParams);
 }
 
 void initialiseSystem(void) {
@@ -35,17 +40,17 @@ void initialiseSystem(void) {
 	stdio_initialise(ser_USART0); // Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
-	mh_z19_initialise(ser_USART3); // This port is taken from the documentation (https://ihavn.github.io/IoT_Semester_project/mh_z19_driver_quick_start.html#mh_z19_use_cases)
-	lora_driver_initialise(ser_USART1, NULL);
+  mh_z19_initialise(ser_USART3); // This port is taken from the documentation (https://ihavn.github.io/IoT_Semester_project/mh_z19_driver_quick_start.html#mh_z19_use_cases)
+	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t) * 2);
+	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
 
 	sensorData = sensorData_init();
-	runTaskSetups();
 	createTasks();
 }
 
 int main(void) {
 	initialiseSystem();
 	printf("\nSystem initialized\nStarting Task Scheduler\n");
-	vTaskStartScheduler(); 
+	vTaskStartScheduler();
 }
 
