@@ -75,6 +75,7 @@ namespace SEP4IOT #LightYellow {
             {method} void dataCollection_task(void *pvParameters)
         }
 
+
         class DataCollection{
             {field} SemaphoreHandle_t mutex
             {field} sensorData_t sensorData
@@ -89,6 +90,8 @@ namespace SEP4IOT #LightYellow {
             {method} void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams)
             {method} void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters)
             {method} void temperatureTransmit_task(void *pvParameters)
+            {method} inline void temperatureTransmit_taskInit(void* pvParameters)
+            {method} inline void temperatureTransmit_taskRun()
         }
 
         class TemperatureTransmit {
@@ -99,18 +102,32 @@ namespace SEP4IOT #LightYellow {
             {method} void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams)
             {method} void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters)
             {method} void temperatureTransmit_task(void *pvParameters)
-            {method} void loRaWANSetup(void)
+            {method} inline void temperatureTransmit_taskInit(void* pvParameters)
+            {method} inline void temperatureTransmit_taskRun()
         }
 
         ITemperatureTransmit <|-- TemperatureTransmit
         IDataCollection <|-- DataCollection
         IClimateControl <|-- ClimateControl
     }
+    namespace Util {
+        interface ILoRaWANUtil #Pink {
+            {method} void LoRaWANUtil_setup(void)
+            {method} void LoRaWANUtil_sendPayload(lora_driver_payload_t *_uplink_payload)
+        }
+        
+        class LoRaWANUtil {
+            {method} void LoRaWANUtil_setup(void)
+            {method} void LoRaWANUtil_sendPayload(lora_driver_payload_t *_uplink_payload)
+        }
+        ILoRaWANUtil <|-- LoRaWANUtil
+    }
 
     SEP4IOT.main ..> SEP4IOT.Tasks.ITemperatureTransmit
     SEP4IOT.main ..> SEP4IOT.Tasks.IDataCollection
     SEP4IOT.main ..> SEP4IOT.Tasks.IClimateControl
     SEP4IOT.Tasks.TemperatureTransmit --> SEP4IOT.DataModels.ISensorData
+    SEP4IOT.Tasks.TemperatureTrasmit ..> SEP4IOT.Util.ILoRaWANUtil
     SEP4IOT.Tasks.DataCollection --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.ClimateControl --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.ClimateControl --> SEP4IOT.DataModels.IBreadConfig

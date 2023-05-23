@@ -21,11 +21,17 @@ FetchContent_MakeAvailable(googletest )
 set(SOURCES_TEST
     tests_SEP4-IOT.cpp
     ClimateControlTest.cpp
+    SensorDataTests.cpp
+    temperatureTransmitTest.cpp
+    CloudDownlinkTests.cpp
     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
     ../SEP4-IOT/Tasks/ClimateControl.c
     ../SEP4-IOT/Tasks/DataCollection.c
     ../SEP4-IOT/DataModels/BreadConfig.c
+    ../SEP4-IOT/Tasks/TemperatureTransmit.c
+    ../SEP4-IOT/Tasks/CloudDownlink.c
     ../SEP4-IOT/DataModels/SensorData.c
+    ../SEP4-IOT/DataModels/BreadConfig.c
     ${SRCS}
 )
 
@@ -35,6 +41,7 @@ include_directories(
   ../SEP4-IOT/Tasks
   ../SEP4-IOT/DataModels
   ../SEP4-IOT/drivers
+  ../SEP4-IOT/Util
 )
 
 # Something to 

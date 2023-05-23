@@ -3,8 +3,8 @@
 #include "SensorDefinitions.h"
 
 typedef struct breadConfig {
-	int16_t temperature;
-	int16_t humidity;
+	uint16_t temperature;
+	uint8_t humidity;
 } * breadConfig_t;
 
 breadConfig_t breadConfig_init();

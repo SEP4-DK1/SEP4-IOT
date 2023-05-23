@@ -1,5 +1,6 @@
 #include "DataCollection.h"
 #include <hih8120.h>
+#include <mh_z19.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -42,6 +43,9 @@ void dataCollection_task(void *pvParameters){
 	vTaskDelay(pdMS_TO_TICKS(50UL));
 	if (hih8120_measure() != HIH8120_OK) {
 		printf("ERROR: Measure HIH8120 failed\n");
+	}
+	if (mh_z19_takeMeassuring() != MHZ19_OK){
+		printf("ERROR: Measure mh_z19 failed\n");
 	}
 	vTaskDelay(pdMS_TO_TICKS(1UL));
 

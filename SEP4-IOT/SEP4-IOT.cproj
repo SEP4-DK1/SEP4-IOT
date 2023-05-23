@@ -162,6 +162,9 @@
     <Compile Include="DataModels\SensorData.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DataModels\SensorDefinitions.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\display_7seg.h">
       <SubType>compile</SubType>
     </Compile>
@@ -309,6 +312,12 @@
     <Compile Include="Tasks\ClimateControl.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Tasks\CloudDownlink.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\CloudDownlink.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Tasks\DataCollection.c">
       <SubType>compile</SubType>
     </Compile>
@@ -319,6 +328,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Tasks\TemperatureTransmit.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Util\LoRaWANUtil.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Util\LoRaWANUtil.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
@@ -333,6 +348,7 @@
     <Folder Include="DataModels" />
     <Folder Include="PlantUML" />
     <Folder Include="Tasks" />
+    <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\LoraWAN_Config_Template.txt">

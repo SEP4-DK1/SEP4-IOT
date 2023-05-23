@@ -4,8 +4,8 @@
 breadConfig_t breadConfig_init() {
 	breadConfig_t breadConfig;
 	breadConfig = malloc(sizeof(*breadConfig));
-	breadConfig->temperature = -1;
-	breadConfig->humidity = -1;
+	breadConfig->temperature = 0xffff;
+	breadConfig->humidity = 0xff;
 	return breadConfig;
 }
 
