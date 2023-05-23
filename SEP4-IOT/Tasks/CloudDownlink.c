@@ -37,15 +37,15 @@ void cloudDownlink_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		,  NULL );
 }
 
-SemaphoreHandle_t mutex;
+SemaphoreHandle_t cloudDownlink_mutex;
 MessageBufferHandle_t downLinkMessageBufferHandle;
-breadConfig_t breadConfig;
+breadConfig_t cloudDownlink_breadConfig;
 
 inline void cloudDownlink_init(void* pvParameters) {
 	cloudDownlinkParams_t params = (cloudDownlinkParams_t) pvParameters;
-	mutex = params->mutex;
+	cloudDownlink_mutex = params->mutex;
 	downLinkMessageBufferHandle = params->messageBufferHandle;
-	breadConfig = params->breadConfig;
+	cloudDownlink_breadConfig = params->breadConfig;
 	cloudDownlink_destroyParams(params);
 }
 
@@ -62,8 +62,8 @@ inline void cloudDownlink_run() {
       uint16_t readTemp = (uint16_t) (((downlinkPayload.bytes[1] & 0b11000000) << 2) + (0b11111111 & downlinkPayload.bytes[0]));
       uint8_t readHum = (uint8_t) (((downlinkPayload.bytes[2] & 0b10000000) >> 1) + (downlinkPayload.bytes[1] & 0b00111111));
 
-      breadConfig->temperature = readTemp;
-      breadConfig->humidity = readHum;
+      cloudDownlink_breadConfig->temperature = readTemp;
+      cloudDownlink_breadConfig->humidity = readHum;
       printf("Temperature received: %d\tHumidity received: %d\n", readTemp, readHum);
     }
   }
