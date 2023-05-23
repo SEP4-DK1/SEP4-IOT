@@ -10,6 +10,9 @@ typedef struct cloudDownlinkParams {
   breadConfig_t breadConfig;
 } * cloudDownlinkParams_t;
 
+void cloudDownlink_init(void* pvParameters);
+void cloudDownlink_run();
+
 cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t mutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig);
 void cloudDownlink_destroyParams(cloudDownlinkParams_t cloudDownlinkParams);
 void cloudDownlink_createTask(UBaseType_t taskPriority, void* pvParameters);

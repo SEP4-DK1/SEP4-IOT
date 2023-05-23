@@ -21,10 +21,13 @@ FetchContent_MakeAvailable(googletest )
 set(SOURCES_TEST
     SensorDataTests.cpp
     temperatureTransmitTest.cpp
+    CloudDownlinkTests.cpp
     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
     ../SEP4-IOT/Tasks/DataCollection.c
     ../SEP4-IOT/Tasks/TemperatureTransmit.c
+    ../SEP4-IOT/Tasks/CloudDownlink.c
     ../SEP4-IOT/DataModels/SensorData.c
+    ../SEP4-IOT/DataModels/BreadConfig.c
     ${SRCS}
 )
 
