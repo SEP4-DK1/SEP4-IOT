@@ -19,7 +19,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest )
 
 set(SOURCES_TEST
-    tests_SEP4-IOT.cpp
     ClimateControlTest.cpp
     SensorDataTests.cpp
     temperatureTransmitTest.cpp
