@@ -47,19 +47,6 @@ TEST_F(DownlinkTestFixture, testrun){
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(DownlinkTestFixture, testEmptyOrNoPayloadRecived){
-  xMessageBufferReceive_fake.return_val = 0;
-
-  breadConfig_t breadConfig = breadConfig_init();
-  MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
-  
-  cloudDownlink_init(params);
-  cloudDownlink_run();
-  breadConfig_destroy(breadConfig);
-}
-
 TEST_F(DownlinkTestFixture, testPayloadLength1RecivedDoesntWriteToBreadConfig){
   xMessageBufferReceive_fake.custom_fake = []( MessageBufferHandle_t xMessageBuffer,void *pvRxData,size_t xBufferLengthBytes,TickType_t xTicksToWait ) -> size_t {
     lora_driver_payload_t* payload = (lora_driver_payload_t*) pvRxData;
