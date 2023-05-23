@@ -10,6 +10,7 @@
 #include <lora_driver.h>
 #include <status_leds.h>
 #include <hih8120.h>
+#include <rc_servo.h>
 
 #include "DataModels/SensorData.h"
 #include "DataModels/BreadConfig.h"
@@ -24,10 +25,11 @@ breadConfig_t breadConfig;
 
 void createTasks(void) {
 	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData, downLinkMessageBufferHandle);
-	temperatureTransmit_createTask(3, (void*)temperatureTransmitParams);
+	temperatureTransmit_createTask(4, (void*)temperatureTransmitParams);
 	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
-	dataCollection_createTask(2, (void*)dataCollectionParams);
+	dataCollection_createTask(3, (void*)dataCollectionParams);
 	climateControlParams_t climateControlParams = climateControl_createParams(mutex, sensorData, breadConfig);
+	climateControl_createTask(2, (void*)climateControlParams);
 }
 
 void runTaskSetups(void) {
@@ -41,6 +43,7 @@ void initialiseSystem(void) {
 	stdio_initialise(ser_USART0); // Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
+	rc_servo_initialise();
 	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t)*2); // Space for 2 payloads
 	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
 
