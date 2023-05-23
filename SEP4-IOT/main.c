@@ -43,7 +43,7 @@ void initialiseSystem(void) {
 	stdio_initialise(ser_USART0); // Make it possible to use stdio on COM port 0 (USB) on Arduino board - Setting 57600,8,N,1
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
-  mh_z19_initialise(ser_USART3); // This port is taken from the documentation (https://ihavn.github.io/IoT_Semester_project/mh_z19_driver_quick_start.html#mh_z19_use_cases)
+	mh_z19_initialise(ser_USART3); // This port is taken from the documentation (https://ihavn.github.io/IoT_Semester_project/mh_z19_driver_quick_start.html#mh_z19_use_cases)
 	rc_servo_initialise();
 	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t) * 2);
 	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
