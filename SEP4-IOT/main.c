@@ -17,7 +17,8 @@
 #include "DataModels/BreadConfig.h"
 #include "Tasks/CloudUplink.h"
 #include "Tasks/CloudDownlink.h"
-#include "Tasks/DataCollection.h"
+#include "Tasks/HIH8120DataCollection.h"
+#include "Tasks/MHZ19DataCollection.h"
 #include "Tasks/ClimateControl.h"
 
 SemaphoreHandle_t mutex;
@@ -27,13 +28,15 @@ breadConfig_t breadConfig;
 
 void createTasks(void) {
 	cloudUplinkParams_t cloudUplinkParams = cloudUplink_createParams(mutex, sensorData);
-	cloudUplink_createTask(5, (void*)cloudUplinkParams);
+	cloudUplink_createTask(7, (void*) cloudUplinkParams);
 	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(mutex, downLinkMessageBufferHandle, breadConfig);
-	cloudDownlink_createTask(4, (void*)cloudDownlinkParams);
-	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
-	dataCollection_createTask(3, (void*)dataCollectionParams);
+	cloudDownlink_createTask(6, (void*) cloudDownlinkParams);
 	climateControlParams_t climateControlParams = climateControl_createParams(mutex, sensorData, breadConfig);
-	climateControl_createTask(2, (void*)climateControlParams);
+	climateControl_createTask(3, (void*) climateControlParams);
+	hih8120DataCollectionParams_t hih8120DataCollectionParams = hih8120DataCollection_createParams(mutex, sensorData);
+	hih8120DataCollection_createTask(2, (void*) hih8120DataCollectionParams);
+	mhz19DataCollectionParams_t mhz19DataCollectionParams = mhz19DataCollection_createParams(mutex, sensorData);
+	mhz19DataCollection_createTask(1, (void*) mhz19DataCollectionParams);
 }
 
 void initialiseSystem(void) {
