@@ -318,16 +318,16 @@
     <Compile Include="Tasks\CloudDownlink.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Tasks\CloudUplink.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\CloudUplink.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Tasks\DataCollection.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Tasks\DataCollection.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Tasks\TemperatureTransmit.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Tasks\TemperatureTransmit.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Util\LoRaWANUtil.c">
