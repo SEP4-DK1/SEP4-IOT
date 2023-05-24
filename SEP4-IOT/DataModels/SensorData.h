@@ -11,13 +11,15 @@ typedef struct sensorData
     uint32_t totalTemperature;
     uint32_t totalHumidity;
     uint32_t totalCarbondioxide;
-    uint16_t counter;
+    uint16_t co2Counter;
+    uint16_t tempHumCounter;
 } * sensorData_t;
 
 sensorData_t sensorData_init();
 void sensorData_destroy(sensorData_t data);
 
-void sensorData_measure(sensorData_t data);
+void sensorData_hih8120Measure(sensorData_t data);
+void sensorData_mhz19Measure(sensorData_t data);
 void sensorData_reset(sensorData_t data);
 
 uint16_t sensorData_getTemperatureAverage(sensorData_t data);

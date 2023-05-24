@@ -44,7 +44,7 @@ TEST_F(TempTestFixture, testInit){
 TEST_F(TempTestFixture, testrun){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
-    data->counter=1;
+    data->tempHumCounter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
@@ -57,7 +57,7 @@ TEST_F(TempTestFixture, testrun){
 TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
-    data->counter=1;
+    data->tempHumCounter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
@@ -66,14 +66,14 @@ TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
     cloudUplink_taskRun();
 
     ASSERT_EQ(data->totalTemperature,0);
-    ASSERT_EQ(data->counter,0);        
+    ASSERT_EQ(data->tempHumCounter,0);        
     sensorData_destroy(data);
 }
 
 TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
-    data->counter=1;
+    data->tempHumCounter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
@@ -89,7 +89,7 @@ TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
 TEST_F(TempTestFixture,testValueOfHumidityInPayload){
     sensorData_t data = sensorData_init();
     data->totalHumidity=100;
-    data->counter=1;
+    data->tempHumCounter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
@@ -105,7 +105,7 @@ TEST_F(TempTestFixture,testValueOfHumidityInPayload){
 TEST_F(TempTestFixture,testValueOfCO2InPayload){
     sensorData_t data = sensorData_init();
     data->totalCarbondioxide=4965;
-    data->counter=1;
+    data->co2Counter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);

@@ -25,7 +25,6 @@ set(SOURCES_TEST
     CloudDownlinkTests.cpp
     FreeRTOS_defs/FreeRTOS_FFF_MocksDefinitions.cpp
     ../SEP4-IOT/Tasks/ClimateControl.c
-    ../SEP4-IOT/Tasks/DataCollection.c
     ../SEP4-IOT/DataModels/BreadConfig.c
     ../SEP4-IOT/Tasks/CloudUplink.c
     ../SEP4-IOT/Tasks/CloudDownlink.c
