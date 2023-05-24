@@ -127,7 +127,7 @@ namespace SEP4IOT #LightYellow {
     SEP4IOT.main ..> SEP4IOT.Tasks.IDataCollection
     SEP4IOT.main ..> SEP4IOT.Tasks.IClimateControl
     SEP4IOT.Tasks.TemperatureTransmit --> SEP4IOT.DataModels.ISensorData
-    SEP4IOT.Tasks.TemperatureTrasmit ..> SEP4IOT.Util.ILoRaWANUtil
+    SEP4IOT.Tasks.TemperatureTransmit ..> SEP4IOT.Util.ILoRaWANUtil
     SEP4IOT.Tasks.DataCollection --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.ClimateControl --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.ClimateControl --> SEP4IOT.DataModels.IBreadConfig
