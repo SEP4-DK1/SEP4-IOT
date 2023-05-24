@@ -7,7 +7,7 @@
 extern "C" {
     #include "LoRaWANUtil.h"
     #include "SensorData.h"
-    #include "TemperatureTransmit.h"
+    #include "CloudUplink.h"
 }
 
 
@@ -34,9 +34,9 @@ protected:
 TEST_F(TempTestFixture, testInit){
     sensorData_t data = sensorData_init();
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
     
-    temperatureTransmit_taskInit(params);
+    cloudUplink_taskInit(params);
     sensorData_destroy(data);
     ASSERT_EQ(1,1);
 }
@@ -47,10 +47,10 @@ TEST_F(TempTestFixture, testrun){
     data->counter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
     
-    temperatureTransmit_taskInit(params);
-    temperatureTransmit_taskRun();
+    cloudUplink_taskInit(params);
+    cloudUplink_taskRun();
     sensorData_destroy(data);
 }
 
@@ -60,10 +60,10 @@ TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
     data->counter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
     
-    temperatureTransmit_taskInit(params);
-    temperatureTransmit_taskRun();
+    cloudUplink_taskInit(params);
+    cloudUplink_taskRun();
 
     ASSERT_EQ(data->totalTemperature,0);
     ASSERT_EQ(data->counter,0);        
@@ -76,10 +76,10 @@ TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
     data->counter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
     
-    temperatureTransmit_taskInit(params);
-    temperatureTransmit_taskRun();
+    cloudUplink_taskInit(params);
+    cloudUplink_taskRun();
 
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[0],(uint8_t) 194);
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[1] & 0b11000000,(uint8_t) 64);
@@ -92,10 +92,10 @@ TEST_F(TempTestFixture,testValueOfHumidityInPayload){
     data->counter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
     
-    temperatureTransmit_taskInit(params);
-    temperatureTransmit_taskRun();
+    cloudUplink_taskInit(params);
+    cloudUplink_taskRun();
 
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[1] & 0b00111111,(uint8_t) 36);
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[2] & 0b10000000,(uint8_t) 128);
@@ -108,10 +108,10 @@ TEST_F(TempTestFixture,testValueOfCO2InPayload){
     data->counter=1;
 
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    temperatureTransmitParams_t params = temperatureTransmit_createParams(mutex, data);
+    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
     
-    temperatureTransmit_taskInit(params);
-    temperatureTransmit_taskRun();
+    cloudUplink_taskInit(params);
+    cloudUplink_taskRun();
 
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[2] & 0b01111111,(uint8_t) 101);
     ASSERT_EQ(LoRaWANUtil_sendPayload_fake.arg0_val->bytes[3] & 0b11111100,(uint8_t) 152);

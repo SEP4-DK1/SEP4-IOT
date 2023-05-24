@@ -1,4 +1,4 @@
-#include "TemperatureTransmit.h"
+#include "CloudUplink.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -11,24 +11,24 @@
 
 #include "../DataModels/SensorData.h"
 
-temperatureTransmitParams_t temperatureTransmit_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
-	temperatureTransmitParams_t temperatureTransmitParams;
-	temperatureTransmitParams = malloc(sizeof(*temperatureTransmitParams));
-	temperatureTransmitParams->mutex = mutex;
-	temperatureTransmitParams->sensorData = sensorData;
-	return temperatureTransmitParams;
+cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+	cloudUplinkParams_t cloudUplinkParams;
+	cloudUplinkParams = malloc(sizeof(*cloudUplinkParams));
+	cloudUplinkParams->mutex = mutex;
+	cloudUplinkParams->sensorData = sensorData;
+	return cloudUplinkParams;
 }
 
-void temperatureTransmit_destroyParams(temperatureTransmitParams_t temperatureTransmitParams) {
-	if (temperatureTransmitParams != NULL) {
-		free(temperatureTransmitParams);
+void cloudUplink_destroyParams(cloudUplinkParams_t cloudUplinkParams) {
+	if (cloudUplinkParams != NULL) {
+		free(cloudUplinkParams);
 	}
 }
 
-void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters) {
+void cloudUplink_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		xTaskCreate(
-		temperatureTransmit_task
-		,  "Temperature Transmit Task"
+		cloudUplink_task
+		,  "CloudUplink Task"
 		,  configMINIMAL_STACK_SIZE+200
 		,  pvParameters
 		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
@@ -39,19 +39,19 @@ SemaphoreHandle_t mutex;
 lora_driver_payload_t _uplink_payload;
 sensorData_t sensorData;
 
-inline void temperatureTransmit_taskInit(void* pvParameters) {
+inline void cloudUplink_taskInit(void* pvParameters) {
 	LoRaWANUtil_setup();
 
-  temperatureTransmitParams_t params = (temperatureTransmitParams_t) pvParameters;
+  cloudUplinkParams_t params = (cloudUplinkParams_t) pvParameters;
 	mutex = params->mutex;
 	sensorData = params->sensorData;
-	temperatureTransmit_destroyParams(params);
+	cloudUplink_destroyParams(params);
 
 	_uplink_payload.len = 4;
 	_uplink_payload.portNo = 1;
 }
 
-inline void temperatureTransmit_taskRun() {
+inline void cloudUplink_taskRun() {
   uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
 	uint16_t humidity = sensorData_getHumidityAverage(sensorData);
 	uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
@@ -78,16 +78,16 @@ inline void temperatureTransmit_taskRun() {
   LoRaWANUtil_sendPayload(&_uplink_payload);
 }
 
-void temperatureTransmit_task(void* pvParameters) {
+void cloudUplink_task(void* pvParameters) {
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 	
-	temperatureTransmit_taskInit(pvParameters);
+	cloudUplink_taskInit(pvParameters);
 
 
 	for(;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		temperatureTransmit_taskRun();
+		cloudUplink_taskRun();
 	}
 }

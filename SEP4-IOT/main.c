@@ -15,7 +15,7 @@
 
 #include "DataModels/SensorData.h"
 #include "DataModels/BreadConfig.h"
-#include "Tasks/TemperatureTransmit.h"
+#include "Tasks/CloudUplink.h"
 #include "Tasks/CloudDownlink.h"
 #include "Tasks/DataCollection.h"
 #include "Tasks/ClimateControl.h"
@@ -26,8 +26,8 @@ sensorData_t sensorData;
 breadConfig_t breadConfig;
 
 void createTasks(void) {
-	temperatureTransmitParams_t temperatureTransmitParams = temperatureTransmit_createParams(mutex, sensorData);
-	temperatureTransmit_createTask(5, (void*)temperatureTransmitParams);
+	cloudUplinkParams_t cloudUplinkParams = cloudUplink_createParams(mutex, sensorData);
+	cloudUplink_createTask(5, (void*)cloudUplinkParams);
 	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(mutex, downLinkMessageBufferHandle, breadConfig);
 	cloudDownlink_createTask(4, (void*)cloudDownlinkParams);
 	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
