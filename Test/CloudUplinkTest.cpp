@@ -14,7 +14,7 @@ extern "C" {
 FAKE_VOID_FUNC(LoRaWANUtil_setup);
 FAKE_VOID_FUNC(LoRaWANUtil_sendPayload, lora_driver_payload_t*);
 
-class TempTestFixture : public ::testing::Test
+class CloudUplinkFixture : public ::testing::Test
 {
 protected:
     void SetUp() override
@@ -31,7 +31,7 @@ protected:
     {}
 };
 
-TEST_F(TempTestFixture, testInit){
+TEST_F(CloudUplinkFixture, testInit){
     sensorData_t data = sensorData_init();
     SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
     cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
@@ -41,7 +41,7 @@ TEST_F(TempTestFixture, testInit){
     ASSERT_EQ(1,1);
 }
 
-TEST_F(TempTestFixture, testrun){
+TEST_F(CloudUplinkFixture, testrun){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->tempHumCounter=1;
@@ -54,7 +54,7 @@ TEST_F(TempTestFixture, testrun){
     sensorData_destroy(data);
 }
 
-TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
+TEST_F(CloudUplinkFixture,testValueOfSensorDataAfterRun){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->tempHumCounter=1;
@@ -70,7 +70,7 @@ TEST_F(TempTestFixture,testValueOfSensorDataAfterRun){
     sensorData_destroy(data);
 }
 
-TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
+TEST_F(CloudUplinkFixture,testValueOfTemperatureInPayload){
     sensorData_t data = sensorData_init();
     data->totalTemperature=450;
     data->tempHumCounter=1;
@@ -86,7 +86,7 @@ TEST_F(TempTestFixture,testValueOfTemperatureInPayload){
     sensorData_destroy(data);
 }
 
-TEST_F(TempTestFixture,testValueOfHumidityInPayload){
+TEST_F(CloudUplinkFixture,testValueOfHumidityInPayload){
     sensorData_t data = sensorData_init();
     data->totalHumidity=100;
     data->tempHumCounter=1;
@@ -102,7 +102,7 @@ TEST_F(TempTestFixture,testValueOfHumidityInPayload){
     sensorData_destroy(data);
 }
 
-TEST_F(TempTestFixture,testValueOfCO2InPayload){
+TEST_F(CloudUplinkFixture,testValueOfCO2InPayload){
     sensorData_t data = sensorData_init();
     data->totalCarbondioxide=4965;
     data->co2Counter=1;
