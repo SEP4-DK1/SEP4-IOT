@@ -1,4 +1,3 @@
-
 #pragma once
 #include <ATMEGA_FreeRTOS.h>
 #include <semphr.h>
@@ -16,6 +15,8 @@
 
 #define VENTILATIONOPEN 100
 #define VENTILATIONCLOSE -100
+
+#define CO2LIMIT 2500
 
 typedef struct climateControlParams {
 	SemaphoreHandle_t mutex;
