@@ -41,7 +41,7 @@ SemaphoreHandle_t cloudDownlink_mutex;
 MessageBufferHandle_t downLinkMessageBufferHandle;
 breadConfig_t cloudDownlink_breadConfig;
 
-inline void cloudDownlink_init(void* pvParameters) {
+inline void cloudDownlink_taskInit(void* pvParameters) {
 	cloudDownlinkParams_t params = (cloudDownlinkParams_t) pvParameters;
 	cloudDownlink_mutex = params->mutex;
 	downLinkMessageBufferHandle = params->messageBufferHandle;
@@ -49,7 +49,7 @@ inline void cloudDownlink_init(void* pvParameters) {
 	cloudDownlink_destroyParams(params);
 }
 
-inline void cloudDownlink_run() {
+inline void cloudDownlink_taskRun() {
   lora_driver_payload_t downlinkPayload;
 		
   printf("Listening for downlink...\n");
@@ -73,10 +73,10 @@ void cloudDownlink_task(void* pvParameters) {
 	TickType_t xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xFrequency = pdMS_TO_TICKS(240000UL); // This delay doesn't really matter as xMessageBufferReceive will pause this task until an uplink message is sent from the temperatureTransmit task
 	
-  cloudDownlink_init(pvParameters);
+  cloudDownlink_taskInit(pvParameters);
 
 	for(;;) {
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		cloudDownlink_run();		
+		cloudDownlink_taskRun();		
 	}
 }

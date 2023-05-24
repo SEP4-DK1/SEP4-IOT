@@ -32,7 +32,7 @@ TEST_F(DownlinkTestFixture, testInit){
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
   
-  cloudDownlink_init(params);
+  cloudDownlink_taskInit(params);
   breadConfig_destroy(breadConfig);
 }
 
@@ -42,8 +42,8 @@ TEST_F(DownlinkTestFixture, testrun){
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
   
-  cloudDownlink_init(params);
-  cloudDownlink_run();
+  cloudDownlink_taskInit(params);
+  cloudDownlink_taskRun();
   breadConfig_destroy(breadConfig);
 }
 
@@ -62,8 +62,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength1RecivedDoesntWriteToBreadConfig){
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
   
-  cloudDownlink_init(params);
-  cloudDownlink_run();
+  cloudDownlink_taskInit(params);
+  cloudDownlink_taskRun();
   ASSERT_EQ(breadConfig->temperature, 420);
   breadConfig_destroy(breadConfig);
 }
@@ -85,8 +85,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength10RecivedDoesntWriteToBreadConfig){
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
   
-  cloudDownlink_init(params);
-  cloudDownlink_run();
+  cloudDownlink_taskInit(params);
+  cloudDownlink_taskRun();
   ASSERT_EQ(breadConfig->temperature, 65535);
   breadConfig_destroy(breadConfig);
 }
@@ -108,8 +108,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesTemperatureToBreadCon
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
   
-  cloudDownlink_init(params);
-  cloudDownlink_run();
+  cloudDownlink_taskInit(params);
+  cloudDownlink_taskRun();
   ASSERT_EQ(breadConfig->temperature, 354);
   breadConfig_destroy(breadConfig);
 }
@@ -131,8 +131,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesHumidityToBreadConfig
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
   
-  cloudDownlink_init(params);
-  cloudDownlink_run();
+  cloudDownlink_taskInit(params);
+  cloudDownlink_taskRun();
   ASSERT_EQ(breadConfig->humidity, 77);
   breadConfig_destroy(breadConfig);
 }
