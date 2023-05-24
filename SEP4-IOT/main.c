@@ -10,22 +10,30 @@
 #include <lora_driver.h>
 #include <status_leds.h>
 #include <hih8120.h>
+#include <rc_servo.h>
 #include <mh_z19.h>
 
 #include "DataModels/SensorData.h"
-#include "Tasks/TemperatureTransmit.h"
+#include "DataModels/BreadConfig.h"
+#include "Tasks/CloudUplink.h"
+#include "Tasks/CloudDownlink.h"
 #include "Tasks/DataCollection.h"
+#include "Tasks/ClimateControl.h"
 
 SemaphoreHandle_t mutex;
+MessageBufferHandle_t downLinkMessageBufferHandle;
 sensorData_t sensorData;
+breadConfig_t breadConfig;
 
 void createTasks(void) {
-	temperatureTransmit_createTask(3, (void*)sensorData);
-	dataCollection_createTask(2, (void*)sensorData);
-}
-
-void runTaskSetups(void) {
-	// runTaskSetups function might not be useful, but it's kept for now
+	cloudUplinkParams_t cloudUplinkParams = cloudUplink_createParams(mutex, sensorData);
+	cloudUplink_createTask(5, (void*)cloudUplinkParams);
+	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(mutex, downLinkMessageBufferHandle, breadConfig);
+	cloudDownlink_createTask(4, (void*)cloudDownlinkParams);
+	dataCollectionParams_t dataCollectionParams = dataCollection_createParams(mutex, sensorData);
+	dataCollection_createTask(3, (void*)dataCollectionParams);
+	climateControlParams_t climateControlParams = climateControl_createParams(mutex, sensorData, breadConfig);
+	climateControl_createTask(2, (void*)climateControlParams);
 }
 
 void initialiseSystem(void) {
@@ -36,16 +44,18 @@ void initialiseSystem(void) {
 	status_leds_initialise(5); // Priority 5 for internal task
 	hih8120_initialise();
 	mh_z19_initialise(ser_USART3); // This port is taken from the documentation (https://ihavn.github.io/IoT_Semester_project/mh_z19_driver_quick_start.html#mh_z19_use_cases)
-	lora_driver_initialise(ser_USART1, NULL);
+	rc_servo_initialise();
+	downLinkMessageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t) * 2);
+	lora_driver_initialise(ser_USART1, downLinkMessageBufferHandle);
 
 	sensorData = sensorData_init();
-	runTaskSetups();
+	breadConfig = breadConfig_init();
 	createTasks();
 }
 
 int main(void) {
 	initialiseSystem();
 	printf("\nSystem initialized\nStarting Task Scheduler\n");
-	vTaskStartScheduler(); 
+	vTaskStartScheduler();
 }
 

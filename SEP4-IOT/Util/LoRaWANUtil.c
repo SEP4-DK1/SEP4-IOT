@@ -1,17 +1,14 @@
-#include "TemperatureTransmit.h"
+#include "LoRaWANUtil.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <ATMEGA_FreeRTOS.h>
-#include <task.h>
 
 #include "../Config/LoraWAN_Config.h"
-#include <lora_driver.h>
 #include <status_leds.h>
-#include <hih8120.h>
 
-#include "../DataModels/SensorData.h"
 
-static void loRaWANSetup(void) {
+void LoRaWANUtil_setup(void) {
 	// Hardware reset of LoRaWAN transceiver
 	lora_driver_resetRn2483(1);
 	vTaskDelay(2);
@@ -89,73 +86,11 @@ static void loRaWANSetup(void) {
 		// Lets stay here
 		while (1)
 		{
-			taskYIELD();
+			//taskYIELD();
 		}
 	}
 }
 
-void temperatureTransmit_createTask(UBaseType_t taskPriority, void* pvParameters) {
-		xTaskCreate(
-		temperatureTransmit_task
-		,  "Temperature Transmit Task"
-		,  configMINIMAL_STACK_SIZE+100
-		,  pvParameters
-		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
-		,  NULL );
-}
-
-// Test Helper Function (Move this somewhere else at some point!)
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char const *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-    
-    for (i = 0; i < size; i++) {
-        for (j = 7; j >= 0; j--) {
-            byte = (b[i] >> j) & 1;
-            printf("%u", byte);
-        }
-		printf(" ");
-    }
-    puts("");
-}
-
-void temperatureTransmit_task(void* pvParameters) {
-	loRaWANSetup();
-	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
-	sensorData_t sensorData = (sensorData_t) pvParameters;
-	
-	lora_driver_payload_t _uplink_payload;
-	_uplink_payload.len = 2;
-	_uplink_payload.portNo = 1;
-
-	for(;;)
-	{
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
-		uint16_t humidity = sensorData_getHumidityAverage(sensorData);
-		uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
-
-		sensorData_reset(sensorData);
-		printf("Average Minute Temperature: %d\n", temperature);
-		printf("Average Minute Humidity: %d\n", humidity);
-
-		// Clear payload bytes
-		for (int i = 0; i < _uplink_payload.len; i++) {
-			_uplink_payload.bytes[i] = 0;
-		}
-		
-		_uplink_payload.bytes[0] = (char) temperature;
-		_uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
-
-		_uplink_payload.bytes[1] |= ((char) (humidity >> 6)) & 0b00111111;
-		_uplink_payload.bytes[2] |= ((char) (humidity >> 1)) & 0b10000000;
-
-		// _uplink_payload.bytes[2] |= ((char) ( carbondioxide >> 7)) & 0b01111111;
-		// _uplink_payload.bytes[3] |= ((char) ( carbondioxide >> 6)) & 0111111100;
-		
-		printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, &_uplink_payload)));
-	}
+void LoRaWANUtil_sendPayload(lora_driver_payload_t *_uplink_payload){
+	printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(lora_driver_sendUploadMessage(false, _uplink_payload)));
 }
