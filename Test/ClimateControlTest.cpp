@@ -250,12 +250,14 @@ TEST_F(TestClimateControl, testHumidity90OpenVentilation80WithConfig80PercentHum
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(TestClimateControl, testOpenVentilationWithC02At2600) {
+TEST_F(TestClimateControl, testOpenVentilationWithC02AboveLimit) {
   // Set up the test data
   SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
   sensorData_t sensorData = sensorData_init();
   breadConfig_t breadConfig = breadConfig_init();
-  sensorData->latestCarbondioxide = 2600; 
+  breadConfig->temperature = 400;
+  breadConfig->humidity = 60;
+  sensorData->latestCarbondioxide = CO2LIMIT + 100;
 
 
   climateControlParams_t params = climateControl_createParams(mutex, sensorData, breadConfig);

@@ -39,6 +39,13 @@ void climateControl_taskInit(void *pvParameters) {
 }
 
 void climateControl_taskRun() {
+
+  if (climateControl_breadConfig->temperature == 0 && climateControl_breadConfig->humidity == 0) {
+    rc_servo_setPosition(SERVO0, HEATEROFF);
+		rc_servo_setPosition(SERVO1, VENTILATIONCLOSE);
+    return;
+  }
+
   if (climateControl_sensorData->latestTemperature > climateControl_breadConfig->temperature + 100) {
     // turn heater to 0% 
     rc_servo_setPosition(SERVO0, HEATEROFF);
@@ -66,7 +73,7 @@ void climateControl_taskRun() {
 
   if (climateControl_sensorData->latestTemperature > climateControl_breadConfig->temperature + 150
       || climateControl_sensorData->latestHumidity > climateControl_breadConfig->humidity + 5
-	    || climateControl_sensorData->latestCarbondioxide >= 2500) {
+	    || climateControl_sensorData->latestCarbondioxide >= CO2LIMIT) {
 		// Open ventilation
 		rc_servo_setPosition(SERVO1, VENTILATIONOPEN);
 	}
