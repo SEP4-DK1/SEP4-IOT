@@ -1,4 +1,5 @@
 #include "SensorData.h"
+#include "SensorDefinitions.h"
 #include <ATMEGA_FreeRTOS.h>
 #include <hih8120.h>
 #include <mh_z19.h>
