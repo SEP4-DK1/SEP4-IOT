@@ -13,27 +13,27 @@
 #include "../Util/MutexDefinitions.h"
 
 cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
-	cloudUplinkParams_t cloudUplinkParams;
-	cloudUplinkParams = malloc(sizeof(*cloudUplinkParams));
-	cloudUplinkParams->sensorDataMutex = sensorDataMutex;
-	cloudUplinkParams->sensorData = sensorData;
-	return cloudUplinkParams;
+  cloudUplinkParams_t cloudUplinkParams;
+  cloudUplinkParams = malloc(sizeof(*cloudUplinkParams));
+  cloudUplinkParams->sensorDataMutex = sensorDataMutex;
+  cloudUplinkParams->sensorData = sensorData;
+  return cloudUplinkParams;
 }
 
 void cloudUplink_destroyParams(cloudUplinkParams_t cloudUplinkParams) {
-	if (cloudUplinkParams != NULL) {
-		free(cloudUplinkParams);
-	}
+  if (cloudUplinkParams != NULL) {
+    free(cloudUplinkParams);
+  }
 }
 
 void cloudUplink_createTask(UBaseType_t taskPriority, void* pvParameters) {
-		xTaskCreate(
-		cloudUplink_task
-		,  "CloudUplink Task"
-		,  configMINIMAL_STACK_SIZE+200
-		,  pvParameters
-		,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
-		,  NULL );
+  xTaskCreate(
+  cloudUplink_task
+  ,  "CloudUplink Task"
+  ,  configMINIMAL_STACK_SIZE+200
+  ,  pvParameters
+  ,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
+  ,  NULL );
 }
 
 SemaphoreHandle_t sensorDataMutex;
@@ -41,15 +41,15 @@ lora_driver_payload_t _uplink_payload;
 sensorData_t sensorData;
 
 inline void cloudUplink_taskInit(void* pvParameters) {
-	LoRaWANUtil_setup();
+  LoRaWANUtil_setup();
 
   cloudUplinkParams_t params = (cloudUplinkParams_t) pvParameters;
-	sensorDataMutex = params->sensorDataMutex;
-	sensorData = params->sensorData;
-	cloudUplink_destroyParams(params);
+  sensorDataMutex = params->sensorDataMutex;
+  sensorData = params->sensorData;
+  cloudUplink_destroyParams(params);
 
-	_uplink_payload.len = 4;
-	_uplink_payload.portNo = 1;
+  _uplink_payload.len = 4;
+  _uplink_payload.portNo = 1;
 }
 
 inline void cloudUplink_taskRun() {
@@ -84,15 +84,14 @@ inline void cloudUplink_taskRun() {
 }
 
 void cloudUplink_task(void* pvParameters) {
-	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
-	
-	cloudUplink_taskInit(pvParameters);
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  const TickType_t xFrequency = pdMS_TO_TICKS(300000UL); // 300000 ms = 5 min
 
+  cloudUplink_taskInit(pvParameters);
 
-	for(;;)
-	{
-		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		cloudUplink_taskRun();
-	}
+  for(;;)
+  {
+    xTaskDelayUntil( &xLastWakeTime, xFrequency );
+    cloudUplink_taskRun();
+  }
 }

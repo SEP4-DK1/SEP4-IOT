@@ -9,11 +9,9 @@ extern "C" {
   #include "CloudDownlink.h"
 }
 
-class DownlinkTestFixture : public ::testing::Test
-{
+class DownlinkTestFixture : public ::testing::Test {
 protected:
-  void SetUp() override
-  {
+  void SetUp() override {
     RESET_FAKE(xMessageBufferReceive);
     RESET_FAKE(xTaskCreate);
     RESET_FAKE(xSemaphoreTake);
@@ -24,11 +22,10 @@ protected:
 
     xSemaphoreTake_fake.return_val = pdTRUE;
   }
-  void TearDown() override
-  {}
+  void TearDown() override {}
 };
 
-TEST_F(DownlinkTestFixture, testInit){
+TEST_F(DownlinkTestFixture, testInit) {
   breadConfig_t breadConfig = breadConfig_init();
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
   SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
@@ -38,7 +35,7 @@ TEST_F(DownlinkTestFixture, testInit){
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(DownlinkTestFixture, testrun){
+TEST_F(DownlinkTestFixture, testrun) {
   breadConfig_t breadConfig = breadConfig_init();
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
   SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
@@ -49,7 +46,7 @@ TEST_F(DownlinkTestFixture, testrun){
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(DownlinkTestFixture, testPayloadLength1RecivedDoesntWriteToBreadConfig){
+TEST_F(DownlinkTestFixture, testPayloadLength1RecivedDoesntWriteToBreadConfig) {
   xMessageBufferReceive_fake.custom_fake = []( MessageBufferHandle_t xMessageBuffer,void *pvRxData,size_t xBufferLengthBytes,TickType_t xTicksToWait ) -> size_t {
     lora_driver_payload_t* payload = (lora_driver_payload_t*) pvRxData;
     (*payload).portNo = 1;
@@ -70,7 +67,7 @@ TEST_F(DownlinkTestFixture, testPayloadLength1RecivedDoesntWriteToBreadConfig){
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(DownlinkTestFixture, testPayloadLength10RecivedDoesntWriteToBreadConfig){
+TEST_F(DownlinkTestFixture, testPayloadLength10RecivedDoesntWriteToBreadConfig) {
   xMessageBufferReceive_fake.custom_fake = []( MessageBufferHandle_t xMessageBuffer,void *pvRxData,size_t xBufferLengthBytes,TickType_t xTicksToWait ) -> size_t {
     lora_driver_payload_t* payload = (lora_driver_payload_t*) pvRxData;
     (*payload).portNo = 1;
@@ -93,7 +90,7 @@ TEST_F(DownlinkTestFixture, testPayloadLength10RecivedDoesntWriteToBreadConfig){
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesTemperatureToBreadConfig){
+TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesTemperatureToBreadConfig) {
   xMessageBufferReceive_fake.custom_fake = []( MessageBufferHandle_t xMessageBuffer,void *pvRxData,size_t xBufferLengthBytes,TickType_t xTicksToWait ) -> size_t {
     lora_driver_payload_t* payload = (lora_driver_payload_t*) pvRxData;
     (*payload).portNo = 1;
@@ -116,7 +113,7 @@ TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesTemperatureToBreadCon
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesHumidityToBreadConfig){
+TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesHumidityToBreadConfig) {
   xMessageBufferReceive_fake.custom_fake = []( MessageBufferHandle_t xMessageBuffer,void *pvRxData,size_t xBufferLengthBytes,TickType_t xTicksToWait ) -> size_t {
     lora_driver_payload_t* payload = (lora_driver_payload_t*) pvRxData;
     (*payload).portNo = 1;

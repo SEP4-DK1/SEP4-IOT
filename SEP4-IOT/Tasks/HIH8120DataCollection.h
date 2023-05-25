@@ -4,8 +4,8 @@
 #include "../DataModels/SensorData.h"
 
 typedef struct hih8120DataCollectionParams {
-	SemaphoreHandle_t sensorDataMutex;
-	sensorData_t sensorData;
+  SemaphoreHandle_t sensorDataMutex;
+  sensorData_t sensorData;
 } * hih8120DataCollectionParams_t;
 
 hih8120DataCollectionParams_t hih8120DataCollection_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData);

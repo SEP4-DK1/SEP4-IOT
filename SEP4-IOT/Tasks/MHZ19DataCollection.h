@@ -4,8 +4,8 @@
 #include "../DataModels/SensorData.h"
 
 typedef struct mhz19DataCollectionParams {
-	SemaphoreHandle_t sensorDataMutex;
-	sensorData_t sensorData;
+  SemaphoreHandle_t sensorDataMutex;
+  sensorData_t sensorData;
 } * mhz19DataCollectionParams_t;
 
 mhz19DataCollectionParams_t mhz19DataCollection_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData);

@@ -5,7 +5,7 @@
 #include "../DataModels/BreadConfig.h"
 
 typedef struct cloudDownlinkParams {
-	SemaphoreHandle_t breadConfigMutex;
+  SemaphoreHandle_t breadConfigMutex;
   MessageBufferHandle_t messageBufferHandle;
   breadConfig_t breadConfig;
 } * cloudDownlinkParams_t;

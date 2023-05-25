@@ -4,8 +4,8 @@
 #include "../DataModels/SensorData.h"
 
 typedef struct cloudUplinkParams {
-	SemaphoreHandle_t sensorDataMutex;
-	sensorData_t sensorData;
+  SemaphoreHandle_t sensorDataMutex;
+  sensorData_t sensorData;
 } * cloudUplinkParams_t;
 
 void cloudUplink_taskInit(void* pvParameters);
