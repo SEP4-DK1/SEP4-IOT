@@ -10,11 +10,12 @@
 #include <lora_driver.h>
 
 #include "../DataModels/SensorData.h"
+#include "../Util/MutexDefinitions.h"
 
-cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
 	cloudUplinkParams_t cloudUplinkParams;
 	cloudUplinkParams = malloc(sizeof(*cloudUplinkParams));
-	cloudUplinkParams->mutex = mutex;
+	cloudUplinkParams->sensorDataMutex = sensorDataMutex;
 	cloudUplinkParams->sensorData = sensorData;
 	return cloudUplinkParams;
 }
@@ -35,7 +36,7 @@ void cloudUplink_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		,  NULL );
 }
 
-SemaphoreHandle_t mutex;
+SemaphoreHandle_t sensorDataMutex;
 lora_driver_payload_t _uplink_payload;
 sensorData_t sensorData;
 
@@ -43,7 +44,7 @@ inline void cloudUplink_taskInit(void* pvParameters) {
 	LoRaWANUtil_setup();
 
   cloudUplinkParams_t params = (cloudUplinkParams_t) pvParameters;
-	mutex = params->mutex;
+	sensorDataMutex = params->sensorDataMutex;
 	sensorData = params->sensorData;
 	cloudUplink_destroyParams(params);
 
@@ -52,30 +53,34 @@ inline void cloudUplink_taskInit(void* pvParameters) {
 }
 
 inline void cloudUplink_taskRun() {
-  uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
-	uint16_t humidity = sensorData_getHumidityAverage(sensorData);
-	uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
-	sensorData_reset(sensorData);
-  
-	printf("Average Temperature: %d\n", temperature);
-	printf("Average Humidity: %d\n", humidity);
-	printf("Average Co2: %d\n", carbondioxid);
+  if (xSemaphoreTake(sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+    uint16_t temperature = sensorData_getTemperatureAverage(sensorData);
+    uint16_t humidity = sensorData_getHumidityAverage(sensorData);
+    uint16_t carbondioxid = sensorData_getCarbondioxideAverage(sensorData);
+    sensorData_reset(sensorData);
+    
+    xSemaphoreGive(sensorDataMutex);
 
-	// Clear payload bytes
-	for (uint8_t i = 0; i < _uplink_payload.len; i++) {
-		_uplink_payload.bytes[i] = 0;
-	}
-	
-	_uplink_payload.bytes[0] = (char) temperature;
-	_uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
-  
-	_uplink_payload.bytes[1] |= (char) (humidity & 0b00111111);
-	_uplink_payload.bytes[2] |= ((char) (humidity << 1)) & 0b10000000;
+    printf("Average Temperature: %d\n", temperature);
+    printf("Average Humidity: %d\n", humidity);
+    printf("Average Co2: %d\n", carbondioxid);
 
-	_uplink_payload.bytes[2] |= (char) (carbondioxid & 0b01111111);
-	_uplink_payload.bytes[3] |= (char) ((carbondioxid >> 5) & 0b11111100);
-	
-  LoRaWANUtil_sendPayload(&_uplink_payload);
+    // Clear payload bytes
+    for (uint8_t i = 0; i < _uplink_payload.len; i++) {
+      _uplink_payload.bytes[i] = 0;
+    }
+    
+    _uplink_payload.bytes[0] = (char) temperature;
+    _uplink_payload.bytes[1] |= ((char) (temperature >> 2)) & 0b11000000;
+    
+    _uplink_payload.bytes[1] |= (char) (humidity & 0b00111111);
+    _uplink_payload.bytes[2] |= ((char) (humidity << 1)) & 0b10000000;
+
+    _uplink_payload.bytes[2] |= (char) (carbondioxid & 0b01111111);
+    _uplink_payload.bytes[3] |= (char) ((carbondioxid >> 5) & 0b11111100);
+    
+    LoRaWANUtil_sendPayload(&_uplink_payload);
+  }
 }
 
 void cloudUplink_task(void* pvParameters) {

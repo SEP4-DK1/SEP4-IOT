@@ -19,7 +19,8 @@
 #define CO2LIMIT 2500
 
 typedef struct climateControlParams {
-	SemaphoreHandle_t mutex;
+	SemaphoreHandle_t sensorDataMutex;
+	SemaphoreHandle_t breadConfigMutex;
 	sensorData_t sensorData;
     breadConfig_t breadConfig;
 } * climateControlParams_t;
@@ -27,7 +28,7 @@ typedef struct climateControlParams {
 void climateControl_taskRun();
 void climateControl_taskInit(void *pvParameters);
 
-climateControlParams_t climateControl_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData, breadConfig_t breadConfig);
+climateControlParams_t climateControl_createParams(SemaphoreHandle_t sensorDataMutex, SemaphoreHandle_t breadConfigMutex, sensorData_t sensorData, breadConfig_t breadConfig);
 void climateControl_destroyParams(climateControlParams_t dataCollectionParams);
 void climateControl_createTask(UBaseType_t taskPriority, void* pvParameters);
 void climateControl_task(void *pvParameters);
