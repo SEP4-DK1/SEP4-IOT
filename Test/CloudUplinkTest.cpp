@@ -33,8 +33,8 @@ protected:
 
 TEST_F(CloudUplinkFixture, testInit){
     sensorData_t data = sensorData_init();
-    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
+    SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
+    cloudUplinkParams_t params = cloudUplink_createParams(sensorDataMutex, data);
     
     cloudUplink_taskInit(params);
     sensorData_destroy(data);
@@ -46,8 +46,8 @@ TEST_F(CloudUplinkFixture, testrun){
     data->totalTemperature=450;
     data->tempHumCounter=1;
 
-    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
+    SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
+    cloudUplinkParams_t params = cloudUplink_createParams(sensorDataMutex, data);
     
     cloudUplink_taskInit(params);
     cloudUplink_taskRun();
@@ -59,8 +59,8 @@ TEST_F(CloudUplinkFixture,testValueOfSensorDataAfterRun){
     data->totalTemperature=450;
     data->tempHumCounter=1;
 
-    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
+    SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
+    cloudUplinkParams_t params = cloudUplink_createParams(sensorDataMutex, data);
     
     cloudUplink_taskInit(params);
     cloudUplink_taskRun();
@@ -75,8 +75,8 @@ TEST_F(CloudUplinkFixture,testValueOfTemperatureInPayload){
     data->totalTemperature=450;
     data->tempHumCounter=1;
 
-    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
+    SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
+    cloudUplinkParams_t params = cloudUplink_createParams(sensorDataMutex, data);
     
     cloudUplink_taskInit(params);
     cloudUplink_taskRun();
@@ -91,8 +91,8 @@ TEST_F(CloudUplinkFixture,testValueOfHumidityInPayload){
     data->totalHumidity=100;
     data->tempHumCounter=1;
 
-    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
+    SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
+    cloudUplinkParams_t params = cloudUplink_createParams(sensorDataMutex, data);
     
     cloudUplink_taskInit(params);
     cloudUplink_taskRun();
@@ -107,8 +107,8 @@ TEST_F(CloudUplinkFixture,testValueOfCO2InPayload){
     data->totalCarbondioxide=4965;
     data->co2Counter=1;
 
-    SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-    cloudUplinkParams_t params = cloudUplink_createParams(mutex, data);
+    SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
+    cloudUplinkParams_t params = cloudUplink_createParams(sensorDataMutex, data);
     
     cloudUplink_taskInit(params);
     cloudUplink_taskRun();

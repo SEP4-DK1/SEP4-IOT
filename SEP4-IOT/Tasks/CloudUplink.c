@@ -11,10 +11,10 @@
 
 #include "../DataModels/SensorData.h"
 
-cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
 	cloudUplinkParams_t cloudUplinkParams;
 	cloudUplinkParams = malloc(sizeof(*cloudUplinkParams));
-	cloudUplinkParams->mutex = mutex;
+	cloudUplinkParams->sensorDataMutex = sensorDataMutex;
 	cloudUplinkParams->sensorData = sensorData;
 	return cloudUplinkParams;
 }
@@ -35,7 +35,7 @@ void cloudUplink_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		,  NULL );
 }
 
-SemaphoreHandle_t mutex;
+SemaphoreHandle_t sensorDataMutex;
 lora_driver_payload_t _uplink_payload;
 sensorData_t sensorData;
 
@@ -43,7 +43,7 @@ inline void cloudUplink_taskInit(void* pvParameters) {
 	LoRaWANUtil_setup();
 
   cloudUplinkParams_t params = (cloudUplinkParams_t) pvParameters;
-	mutex = params->mutex;
+	sensorDataMutex = params->sensorDataMutex;
 	sensorData = params->sensorData;
 	cloudUplink_destroyParams(params);
 

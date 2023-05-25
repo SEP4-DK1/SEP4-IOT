@@ -11,10 +11,10 @@
 
 #include "../DataModels/SensorData.h"
 
-cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t mutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig) {
+cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t breadConfigMutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig) {
 	cloudDownlinkParams_t cloudDownlinkParams;
 	cloudDownlinkParams = malloc(sizeof(*cloudDownlinkParams));
-	cloudDownlinkParams->mutex = mutex;
+	cloudDownlinkParams->breadConfigMutex = breadConfigMutex;
 	cloudDownlinkParams->messageBufferHandle = messageBufferHandle;
 	cloudDownlinkParams->breadConfig = breadConfig;
 
@@ -37,13 +37,13 @@ void cloudDownlink_createTask(UBaseType_t taskPriority, void* pvParameters) {
 		,  NULL );
 }
 
-SemaphoreHandle_t cloudDownlink_mutex;
+SemaphoreHandle_t cloudDownlink_breadConfigMutex;
 MessageBufferHandle_t downLinkMessageBufferHandle;
 breadConfig_t cloudDownlink_breadConfig;
 
 inline void cloudDownlink_taskInit(void* pvParameters) {
 	cloudDownlinkParams_t params = (cloudDownlinkParams_t) pvParameters;
-	cloudDownlink_mutex = params->mutex;
+	cloudDownlink_breadConfigMutex = params->breadConfigMutex;
 	downLinkMessageBufferHandle = params->messageBufferHandle;
 	cloudDownlink_breadConfig = params->breadConfig;
 	cloudDownlink_destroyParams(params);

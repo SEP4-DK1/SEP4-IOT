@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-mhz19DataCollectionParams_t mhz19DataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+mhz19DataCollectionParams_t mhz19DataCollection_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
 	mhz19DataCollectionParams_t mhz19DataCollectionParams;
 	mhz19DataCollectionParams = malloc(sizeof(*mhz19DataCollectionParams));
-	mhz19DataCollectionParams->mutex = mutex;
+	mhz19DataCollectionParams->sensorDataMutex = sensorDataMutex;
 	mhz19DataCollectionParams->sensorData = sensorData;
 	return mhz19DataCollectionParams;
 }
@@ -31,7 +31,7 @@ void mhz19DataCollection_task(void *pvParameters){
 	const TickType_t xFrequency = pdMS_TO_TICKS(10000UL); // 10000ms = 10s
 	
 	mhz19DataCollectionParams_t params = (mhz19DataCollectionParams_t)pvParameters;
-	SemaphoreHandle_t mutex = params->mutex;
+	SemaphoreHandle_t sensorDataMutex = params->sensorDataMutex;
 	sensorData_t sensorData = params->sensorData;
 	mhz19DataCollection_destroyParams(params);
 	

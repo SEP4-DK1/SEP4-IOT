@@ -29,8 +29,8 @@ protected:
 TEST_F(DownlinkTestFixture, testInit){
   breadConfig_t breadConfig = breadConfig_init();
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
+  SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
+  cloudDownlinkParams_t params = cloudDownlink_createParams(breadConfigMutex, messageBufferHandle, breadConfig);
   
   cloudDownlink_taskInit(params);
   breadConfig_destroy(breadConfig);
@@ -39,8 +39,8 @@ TEST_F(DownlinkTestFixture, testInit){
 TEST_F(DownlinkTestFixture, testrun){
   breadConfig_t breadConfig = breadConfig_init();
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
+  SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
+  cloudDownlinkParams_t params = cloudDownlink_createParams(breadConfigMutex, messageBufferHandle, breadConfig);
   
   cloudDownlink_taskInit(params);
   cloudDownlink_taskRun();
@@ -59,8 +59,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength1RecivedDoesntWriteToBreadConfig){
   breadConfig_t breadConfig = breadConfig_init();
   breadConfig->temperature = 420;
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
+  SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
+  cloudDownlinkParams_t params = cloudDownlink_createParams(breadConfigMutex, messageBufferHandle, breadConfig);
   
   cloudDownlink_taskInit(params);
   cloudDownlink_taskRun();
@@ -82,8 +82,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength10RecivedDoesntWriteToBreadConfig){
   breadConfig_t breadConfig = breadConfig_init();
   breadConfig->temperature = 65535;
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
+  SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
+  cloudDownlinkParams_t params = cloudDownlink_createParams(breadConfigMutex, messageBufferHandle, breadConfig);
   
   cloudDownlink_taskInit(params);
   cloudDownlink_taskRun();
@@ -105,8 +105,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesTemperatureToBreadCon
   breadConfig_t breadConfig = breadConfig_init();
   breadConfig->temperature = 65535;
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
+  SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
+  cloudDownlinkParams_t params = cloudDownlink_createParams(breadConfigMutex, messageBufferHandle, breadConfig);
   
   cloudDownlink_taskInit(params);
   cloudDownlink_taskRun();
@@ -128,8 +128,8 @@ TEST_F(DownlinkTestFixture, testPayloadLength3RecivedWritesHumidityToBreadConfig
   breadConfig_t breadConfig = breadConfig_init();
   breadConfig->humidity = 255;
   MessageBufferHandle_t messageBufferHandle = xMessageBufferCreate(sizeof(lora_driver_payload_t));
-  SemaphoreHandle_t mutex = xSemaphoreCreateMutex();
-  cloudDownlinkParams_t params = cloudDownlink_createParams(mutex, messageBufferHandle, breadConfig);
+  SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
+  cloudDownlinkParams_t params = cloudDownlink_createParams(breadConfigMutex, messageBufferHandle, breadConfig);
   
   cloudDownlink_taskInit(params);
   cloudDownlink_taskRun();

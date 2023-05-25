@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-climateControlParams_t climateControl_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData, breadConfig_t breadConfig) {
+climateControlParams_t climateControl_createParams(SemaphoreHandle_t sensorDataMutex, SemaphoreHandle_t breadConfigMutex, sensorData_t sensorData, breadConfig_t breadConfig) {
   climateControlParams_t climateControlParams;
   climateControlParams = malloc(sizeof(*climateControlParams));
-  climateControlParams->mutex = mutex;
+  climateControlParams->sensorDataMutex = sensorDataMutex;
+  climateControlParams->breadConfigMutex = breadConfigMutex;
   climateControlParams->sensorData = sensorData;
   climateControlParams->breadConfig = breadConfig;
   return climateControlParams;
@@ -26,13 +27,15 @@ void climateControl_createTask(UBaseType_t taskPriority, void* pvParameters){
     ,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
     ,  NULL );
 }
-SemaphoreHandle_t climateControl_mutex;
+SemaphoreHandle_t climateControl_sensorDataMutex;
+SemaphoreHandle_t climateControl_breadConfigMutex;
 sensorData_t climateControl_sensorData;
 breadConfig_t climateControl_breadConfig;
 
 void climateControl_taskInit(void *pvParameters) {
   climateControlParams_t params = (climateControlParams_t)pvParameters;
-  climateControl_mutex = params->mutex;
+  climateControl_sensorDataMutex = params->sensorDataMutex;
+  climateControl_breadConfigMutex = params->breadConfigMutex;
   climateControl_sensorData = params->sensorData;
   climateControl_breadConfig = params->breadConfig;
   climateControl_destroyParams(params);

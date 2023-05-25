@@ -5,7 +5,7 @@
 #include "../DataModels/BreadConfig.h"
 
 typedef struct cloudDownlinkParams {
-	SemaphoreHandle_t mutex;
+	SemaphoreHandle_t breadConfigMutex;
   MessageBufferHandle_t messageBufferHandle;
   breadConfig_t breadConfig;
 } * cloudDownlinkParams_t;
@@ -13,7 +13,7 @@ typedef struct cloudDownlinkParams {
 void cloudDownlink_taskInit(void* pvParameters);
 void cloudDownlink_taskRun();
 
-cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t mutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig);
+cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t breadConfigMutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig);
 void cloudDownlink_destroyParams(cloudDownlinkParams_t cloudDownlinkParams);
 void cloudDownlink_createTask(UBaseType_t taskPriority, void* pvParameters);
 void cloudDownlink_task(void *pvParameters);

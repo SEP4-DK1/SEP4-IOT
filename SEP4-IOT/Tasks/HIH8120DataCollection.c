@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-hih8120DataCollectionParams_t hih8120DataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData) {
+hih8120DataCollectionParams_t hih8120DataCollection_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
 	hih8120DataCollectionParams_t hih8120DataCollectionParams;
 	hih8120DataCollectionParams = malloc(sizeof(*hih8120DataCollectionParams));
-	hih8120DataCollectionParams->mutex = mutex;
+	hih8120DataCollectionParams->sensorDataMutex = sensorDataMutex;
 	hih8120DataCollectionParams->sensorData = sensorData;
 	return hih8120DataCollectionParams;
 }
@@ -32,7 +32,7 @@ void hih8120DataCollection_task(void *pvParameters){
 	const TickType_t xFrequency = pdMS_TO_TICKS(10000UL); // 10000ms = 10s
 	
 	hih8120DataCollectionParams_t params = (hih8120DataCollectionParams_t)pvParameters;
-	SemaphoreHandle_t mutex = params->mutex;
+	SemaphoreHandle_t sensorDataMutex = params->sensorDataMutex;
 	sensorData_t sensorData = params->sensorData;
 	hih8120DataCollection_destroyParams(params);
 	
