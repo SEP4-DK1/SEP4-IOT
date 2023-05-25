@@ -14,7 +14,8 @@ namespace SEP4IOT #LightYellow {
         interface ISensorData #Pink {
             {method} sensorData_t sensorData_init()
             {method} void sensorData_destroy()
-            {method} void sensorData_measure(sensorData_t data)
+            {method} void sensorData_hih8120Measure(sensorData_t data)
+            {method} void sensorData_mhz19Measure(sensorData_t data)
             {method} void sensorData_reset(sensorData_t data)
             {method} uint16_t sensorData_getTemperatureAverage(sensorData_t data)
             {method} uint16_t sensorData_getHumidityAverage(sensorData_t data)
@@ -28,10 +29,12 @@ namespace SEP4IOT #LightYellow {
             {field} uint32_t totalTemperature
             {field} uint32_t totalHumidity
             {field} uint32_t totalCarbondioxide
-            {field} uint16_t counter
+            {field} uint16_t co2Counter
+            {field} uint16_t tempHumCounter
             {method} sensorData_t sensorData_init()
             {method} void sensorData_destroy()
-            {method} void sensorData_measure(sensorData_t data)
+            {method} void sensorData_hih8120Measure(sensorData_t data)
+            {method} void sensorData_mhz19Measure(sensorData_t data)
             {method} void sensorData_reset(sensorData_t data)
             {method} uint16_t sensorData_getTemperatureAverage(sensorData_t data)
             {method} uint16_t sensorData_getHumidityAverage(sensorData_t data)
@@ -75,21 +78,38 @@ namespace SEP4IOT #LightYellow {
             {method} void climateControl_taskRun()
         }
 
-        interface IDataCollection #Pink {
-            {method} dataCollectionParams_t dataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
-            {method} void dataCollection_destroyParams(dataCollectionParams_t dataCollectionParams)
-            {method} void dataCollection_createTask(UBaseType_t taskPriority, void *pvParameters)
-            {method} void dataCollection_task(void *pvParameters)
+        interface IHIH8120DataCollection #Pink {
+            {method} hih8120DataCollectionParams_t hih8120DataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
+            {method} void hih8120DataCollection_destroyParams(hih8120DataCollectionParams_t dataCollectionParams)
+            {method} void hih8120DataCollection_createTask(UBaseType_t taskPriority, void *pvParameters)
+            {method} void hih8120DataCollection_task(void *pvParameters)
         }
 
 
-        class DataCollection{
+        class HIH8120DataCollection{
             {field} SemaphoreHandle_t mutex
             {field} sensorData_t sensorData
-            {method} dataCollectionParams_t dataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
-            {method} void dataCollection_destroyParams(dataCollectionParams_t dataCollectionParams)
-            {method} void dataCollection_createTask(UBaseType_t taskPriority, void *pvParameters)
-            {method} void dataCollection_task(void *pvParameters)
+            {method} hih8120DataCollectionParams_t hih8120DataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
+            {method} void hih8120DataCollection_destroyParams(hih8120DataCollectionParams_t dataCollectionParams)
+            {method} void hih8120DataCollection_createTask(UBaseType_t taskPriority, void *pvParameters)
+            {method} void hih8120DataCollection_task(void *pvParameters)
+        }
+        
+        interface IMHZ19DataCollection #Pink {
+            {method} mhz19DataCollectionParams_t mhz19DataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
+            {method} void mhz19DataCollection_destroyParams(mhz19DataCollectionParams_t dataCollectionParams)
+            {method} void mhz19DataCollection_createTask(UBaseType_t taskPriority, void *pvParameters)
+            {method} void mhz19DataCollection_task(void *pvParameters)
+        }
+
+
+        class MHZ19DataCollection{
+            {field} SemaphoreHandle_t mutex
+            {field} sensorData_t sensorData
+            {method} mhz19DataCollectionParams_t mhz19DataCollection_createParams(SemaphoreHandle_t mutex, sensorData_t sensorData)
+            {method} void mhz19DataCollection_destroyParams(mhz19DataCollectionParams_t dataCollectionParams)
+            {method} void mhz19DataCollection_createTask(UBaseType_t taskPriority, void *pvParameters)
+            {method} void mhz19DataCollection_task(void *pvParameters)
         }
 
         interface ICloudUplink #Pink {
@@ -135,7 +155,8 @@ namespace SEP4IOT #LightYellow {
 
         ICloudDownlink <|-- CloudDownlink
         ICloudUplink <|-- CloudUplink
-        IDataCollection <|-- DataCollection
+        IHIH8120DataCollection <|-- HIH8120DataCollection
+        IMHZ19DataCollection <|-- MHZ19DataCollection
         IClimateControl <|-- ClimateControl
     }
     namespace Util {
@@ -152,11 +173,13 @@ namespace SEP4IOT #LightYellow {
     }
 
     SEP4IOT.main ..> SEP4IOT.Tasks.ICloudUplink
-    SEP4IOT.main ..> SEP4IOT.Tasks.IDataCollection
+    SEP4IOT.main ..> SEP4IOT.Tasks.IHIH8120DataCollection
+    SEP4IOT.main ..> SEP4IOT.Tasks.IMHZ19DataCollection
     SEP4IOT.main ..> SEP4IOT.Tasks.IClimateControl
     SEP4IOT.Tasks.CloudUplink --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.CloudUplink ..> SEP4IOT.Util.ILoRaWANUtil
-    SEP4IOT.Tasks.DataCollection --> SEP4IOT.DataModels.ISensorData
+    SEP4IOT.Tasks.HIH8120DataCollection --> SEP4IOT.DataModels.ISensorData
+    SEP4IOT.Tasks.MHZ19DataCollection --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.ClimateControl --> SEP4IOT.DataModels.ISensorData
     SEP4IOT.Tasks.ClimateControl --> SEP4IOT.DataModels.IBreadConfig
     SEP4IOT.Tasks.CloudDownlink --> SEP4IOT.DataModels.IBreadConfig
