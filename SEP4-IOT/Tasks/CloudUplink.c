@@ -2,14 +2,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <ATMEGA_FreeRTOS.h>
 #include <task.h>
-#include <stdio.h>
 #include "../Util/LoRaWANUtil.h"
 
-#include <lora_driver.h>
-
-#include "../DataModels/SensorData.h"
 #include "../Util/MutexDefinitions.h"
 
 cloudUplinkParams_t cloudUplink_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {

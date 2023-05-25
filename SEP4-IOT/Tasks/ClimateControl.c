@@ -1,7 +1,6 @@
 #include "ClimateControl.h"
 #include "../Util/MutexDefinitions.h"
 #include "rc_servo.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 climateControlParams_t climateControl_createParams(SemaphoreHandle_t sensorDataMutex, SemaphoreHandle_t breadConfigMutex, sensorData_t sensorData, breadConfig_t breadConfig) {

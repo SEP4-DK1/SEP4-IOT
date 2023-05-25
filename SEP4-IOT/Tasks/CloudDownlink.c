@@ -2,14 +2,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <ATMEGA_FreeRTOS.h>
 #include <task.h>
 
-#include <lora_driver.h>
-#include <status_leds.h>
-#include <hih8120.h>
-
-#include "../DataModels/SensorData.h"
 #include "../Util/MutexDefinitions.h"
 
 cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t breadConfigMutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig) {
