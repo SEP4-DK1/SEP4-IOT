@@ -26,6 +26,8 @@ protected:
 		RESET_FAKE(xTaskGetTickCount);
 		RESET_FAKE(xTaskDelayUntil);
 		FFF_RESET_HISTORY();
+
+    xSemaphoreTake_fake.return_val = pdTRUE;
 	}
 	void TearDown() override
 	{}
