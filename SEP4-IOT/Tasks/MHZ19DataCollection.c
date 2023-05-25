@@ -29,13 +29,13 @@ void mhz19DataCollection_createTask(UBaseType_t taskPriority, void* pvParameters
   ,  NULL );
 }
 
-void mhz19DataCollection_task(void *pvParameters) {
-  TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = pdMS_TO_TICKS(10000UL); // 10000ms = 10s
-  
+SemaphoreHandle_t mhz19DataCollection_sensorDataMutex;
+sensorData_t mhz19DataCollection_sensorData;
+
+inline void mhz19DataCollection_taskInit(void* pvParameters) {
   mhz19DataCollectionParams_t params = (mhz19DataCollectionParams_t)pvParameters;
-  SemaphoreHandle_t sensorDataMutex = params->sensorDataMutex;
-  sensorData_t sensorData = params->sensorData;
+  mhz19DataCollection_sensorDataMutex = params->sensorDataMutex;
+  mhz19DataCollection_sensorData = params->sensorData;
   mhz19DataCollection_destroyParams(params);
   
   // Measure to get rid of bad CO2 value
@@ -43,12 +43,23 @@ void mhz19DataCollection_task(void *pvParameters) {
     printf("ERROR: Measure mh_z19 failed\n");
   }
   vTaskDelay(pdMS_TO_TICKS(1UL));
+}
+
+inline void mhz19DataCollection_taskRun(void) {
+  if (xSemaphoreTake(mhz19DataCollection_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+    sensorData_mhz19Measure(mhz19DataCollection_sensorData);
+    xSemaphoreGive(mhz19DataCollection_sensorDataMutex);
+  }
+}
+
+void mhz19DataCollection_task(void* pvParameters) {
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  const TickType_t xFrequency = pdMS_TO_TICKS(10000UL); // 10000ms = 10s
+
+  mhz19DataCollection_taskInit(pvParameters);
 
   for (;;) {
     xTaskDelayUntil( &xLastWakeTime, xFrequency );
-    if (xSemaphoreTake(sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
-      sensorData_mhz19Measure(sensorData);
-      xSemaphoreGive(sensorDataMutex);
-    }
+    mhz19DataCollection_taskRun();
   }
 }

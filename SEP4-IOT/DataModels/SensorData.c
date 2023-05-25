@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-sensorData_t sensorData_init() {
+sensorData_t sensorData_init(void) {
   sensorData_t data; 
   data = malloc(sizeof(*data));
   data->totalTemperature = 0;

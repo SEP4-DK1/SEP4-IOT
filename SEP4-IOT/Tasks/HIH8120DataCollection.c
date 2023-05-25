@@ -29,13 +29,13 @@ void hih8120DataCollection_createTask(UBaseType_t taskPriority, void* pvParamete
   ,  NULL );
 }
 
-void hih8120DataCollection_task(void *pvParameters) {
-  TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = pdMS_TO_TICKS(10000UL); // 10000ms = 10s
-  
+SemaphoreHandle_t hih8120DataCollection_sensorDataMutex;
+sensorData_t hih8120DataCollection_sensorData;
+
+inline void hih8120DataCollection_initTask(void* pvParameters) {
   hih8120DataCollectionParams_t params = (hih8120DataCollectionParams_t)pvParameters;
-  SemaphoreHandle_t sensorDataMutex = params->sensorDataMutex;
-  sensorData_t sensorData = params->sensorData;
+  hih8120DataCollection_sensorDataMutex = params->sensorDataMutex;
+  hih8120DataCollection_sensorData = params->sensorData;
   hih8120DataCollection_destroyParams(params);
   
   // Measure to get rid of bad temperature value
@@ -47,12 +47,23 @@ void hih8120DataCollection_task(void *pvParameters) {
     printf("ERROR: Measure HIH8120 failed\n");
   }
   vTaskDelay(pdMS_TO_TICKS(1UL));
+}
+
+inline void hih8120DataCollection_taskRun(void) {
+  if (xSemaphoreTake(hih8120DataCollection_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+    sensorData_hih8120Measure(hih8120DataCollection_sensorData);
+    xSemaphoreGive(hih8120DataCollection_sensorDataMutex);
+  }
+}
+
+void hih8120DataCollection_task(void* pvParameters) {
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  const TickType_t xFrequency = pdMS_TO_TICKS(10000UL); // 10000ms = 10s
+
+  hih8120DataCollection_initTask(pvParameters);
 
   for (;;) {
     xTaskDelayUntil( &xLastWakeTime, xFrequency );
-    if (xSemaphoreTake(sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
-      sensorData_hih8120Measure(sensorData);
-      xSemaphoreGive(sensorDataMutex);
-    }
+    hih8120DataCollection_taskRun();
   }
 }

@@ -7,5 +7,5 @@ typedef struct breadConfig {
   uint8_t humidity;
 } * breadConfig_t;
 
-breadConfig_t breadConfig_init();
+breadConfig_t breadConfig_init(void);
 void breadConfig_destroy(breadConfig_t breadConfig);

@@ -1,7 +1,7 @@
 #include "BreadConfig.h"
 #include <stdlib.h>
 
-breadConfig_t breadConfig_init() {
+breadConfig_t breadConfig_init(void) {
   breadConfig_t breadConfig;
   breadConfig = malloc(sizeof(*breadConfig));
   breadConfig->temperature = 0;

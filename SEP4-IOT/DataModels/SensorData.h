@@ -14,7 +14,7 @@ typedef struct sensorData {
   uint16_t tempHumCounter;
 } * sensorData_t;
 
-sensorData_t sensorData_init();
+sensorData_t sensorData_init(void);
 void sensorData_destroy(sensorData_t data);
 
 void sensorData_hih8120Measure(sensorData_t data);

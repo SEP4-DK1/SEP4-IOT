@@ -50,7 +50,7 @@ inline void cloudDownlink_taskInit(void* pvParameters) {
   cloudDownlink_destroyParams(params);
 }
 
-inline void cloudDownlink_taskRun() {
+inline void cloudDownlink_taskRun(void) {
   lora_driver_payload_t downlinkPayload;
 
   printf("Listening for downlink...\n");

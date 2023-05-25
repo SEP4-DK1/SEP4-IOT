@@ -35,7 +35,7 @@ SemaphoreHandle_t climateControl_breadConfigMutex;
 sensorData_t climateControl_sensorData;
 breadConfig_t climateControl_breadConfig;
 
-void climateControl_taskInit(void *pvParameters) {
+inline void climateControl_taskInit(void* pvParameters) {
   climateControlParams_t params = (climateControlParams_t)pvParameters;
   climateControl_sensorDataMutex = params->sensorDataMutex;
   climateControl_breadConfigMutex = params->breadConfigMutex;
@@ -44,7 +44,7 @@ void climateControl_taskInit(void *pvParameters) {
   climateControl_destroyParams(params);
 }
 
-void climateControl_taskRun() {
+inline void climateControl_taskRun(void) {
   if (xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE 
       && xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
 
@@ -108,7 +108,7 @@ void climateControl_taskRun() {
   };
 }
 
-void climateControl_task(void *pvParameters) {
+void climateControl_task(void* pvParameters) {
   TickType_t xLastWakeTime = xTaskGetTickCount();
   const TickType_t xFrequency = pdMS_TO_TICKS(2000UL); // 2000ms = 2s
   climateControl_taskInit(pvParameters);
