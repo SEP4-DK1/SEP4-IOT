@@ -1,4 +1,5 @@
 #include "ClimateControl.h"
+#include "../Util/MutexDefinitions.h"
 #include "rc_servo.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,57 +43,67 @@ void climateControl_taskInit(void *pvParameters) {
 }
 
 void climateControl_taskRun() {
+  if (xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE 
+      && xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
 
-  if (climateControl_breadConfig->temperature == 0 && climateControl_breadConfig->humidity == 0) {
-    rc_servo_setPosition(SERVO0, HEATEROFF);
-		rc_servo_setPosition(SERVO1, VENTILATIONCLOSE);
-    return;
-  }
 
-  if (climateControl_sensorData->latestTemperature > climateControl_breadConfig->temperature + 100) {
-    // turn heater to 0% 
-    rc_servo_setPosition(SERVO0, HEATEROFF);
-  }
-  else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 50) {
-    // Turn up heater to 12.5% as a holding effect
-    rc_servo_setPosition(SERVO0, HEATER12PERCENT);
-  }
-  else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 75) {
-    // Turn up heater to 25%
-    rc_servo_setPosition(SERVO0, HEATER25PERCENT);
-  }
-  else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 100) {
-    // Turn up heater to 50%
-    rc_servo_setPosition(SERVO0, HEATER50PERCENT);
-  }
-  else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 200) {
-    // Turn up heater to 75%
-    rc_servo_setPosition(SERVO0, HEATER75PERCENT);
-  }
-  else {
-    // Turn up heater to 100%
-    rc_servo_setPosition(SERVO0, HEATER100PERCENT);
-  }
+    if (climateControl_breadConfig->temperature == 0 && climateControl_breadConfig->humidity == 0) {
+      rc_servo_setPosition(SERVO0, HEATEROFF);
+      rc_servo_setPosition(SERVO1, VENTILATIONCLOSE);
+      
+      xSemaphoreGive(climateControl_sensorDataMutex);
+      xSemaphoreGive(climateControl_breadConfigMutex);
+      return;
+    }
 
-  if (climateControl_sensorData->latestTemperature > climateControl_breadConfig->temperature + 150
-      || climateControl_sensorData->latestHumidity > climateControl_breadConfig->humidity + 5
-	    || climateControl_sensorData->latestCarbondioxide >= CO2LIMIT) {
-		// Open ventilation
-		rc_servo_setPosition(SERVO1, VENTILATIONOPEN);
-	}
-	else {
-		// Close ventilation
-		rc_servo_setPosition(SERVO1, VENTILATIONCLOSE);
-	}
-  
-  
-  if (climateControl_sensorData->latestHumidity < climateControl_breadConfig->humidity - 10){
-    // Turn up heater 100% for 3 sec
-    rc_servo_setPosition(SERVO0, HEATER100PERCENT);
-    vTaskDelay(pdMS_TO_TICKS(3000L));
+    if (climateControl_sensorData->latestTemperature > climateControl_breadConfig->temperature + 100) {
+      // turn heater to 0% 
+      rc_servo_setPosition(SERVO0, HEATEROFF);
+    }
+    else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 50) {
+      // Turn up heater to 12.5% as a holding effect
+      rc_servo_setPosition(SERVO0, HEATER12PERCENT);
+    }
+    else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 75) {
+      // Turn up heater to 25%
+      rc_servo_setPosition(SERVO0, HEATER25PERCENT);
+    }
+    else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 100) {
+      // Turn up heater to 50%
+      rc_servo_setPosition(SERVO0, HEATER50PERCENT);
+    }
+    else if (climateControl_breadConfig->temperature - climateControl_sensorData->latestTemperature <= 200) {
+      // Turn up heater to 75%
+      rc_servo_setPosition(SERVO0, HEATER75PERCENT);
+    }
+    else {
+      // Turn up heater to 100%
+      rc_servo_setPosition(SERVO0, HEATER100PERCENT);
+    }
 
-    rc_servo_setPosition(SERVO0, HEATER12PERCENT);
-  }
+    if (climateControl_sensorData->latestTemperature > climateControl_breadConfig->temperature + 150
+        || climateControl_sensorData->latestHumidity > climateControl_breadConfig->humidity + 5
+        || climateControl_sensorData->latestCarbondioxide >= CO2LIMIT) {
+      // Open ventilation
+      rc_servo_setPosition(SERVO1, VENTILATIONOPEN);
+    }
+    else {
+      // Close ventilation
+      rc_servo_setPosition(SERVO1, VENTILATIONCLOSE);
+    }
+    
+    
+    if (climateControl_sensorData->latestHumidity < climateControl_breadConfig->humidity - 10){
+      // Turn up heater 100% for 3 sec
+      rc_servo_setPosition(SERVO0, HEATER100PERCENT);
+      vTaskDelay(pdMS_TO_TICKS(3000L));
+
+      rc_servo_setPosition(SERVO0, HEATER12PERCENT);
+    }
+
+    xSemaphoreGive(climateControl_sensorDataMutex);
+    xSemaphoreGive(climateControl_breadConfigMutex);
+  };
 }
 
 void climateControl_task(void *pvParameters){

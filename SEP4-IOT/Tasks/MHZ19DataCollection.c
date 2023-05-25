@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../Util/MutexDefinitions.h"
+
 mhz19DataCollectionParams_t mhz19DataCollection_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
 	mhz19DataCollectionParams_t mhz19DataCollectionParams;
 	mhz19DataCollectionParams = malloc(sizeof(*mhz19DataCollectionParams));
@@ -35,7 +37,7 @@ void mhz19DataCollection_task(void *pvParameters){
 	sensorData_t sensorData = params->sensorData;
 	mhz19DataCollection_destroyParams(params);
 	
-	// Measure to get rid of bad temperature value
+	// Measure to get rid of bad CO2 value
 	if (mh_z19_takeMeassuring() != MHZ19_OK){
 		printf("ERROR: Measure mh_z19 failed\n");
 	}
@@ -44,6 +46,9 @@ void mhz19DataCollection_task(void *pvParameters){
 	for (;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		sensorData_mhz19Measure(sensorData);
+		if (xSemaphoreTake(sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+			sensorData_mhz19Measure(sensorData);
+			xSemaphoreGive(sensorDataMutex);
+		}
 	}
 }

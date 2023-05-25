@@ -342,6 +342,9 @@
     <Compile Include="Util\LoRaWANUtil.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Util\MutexDefinitions.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\" />

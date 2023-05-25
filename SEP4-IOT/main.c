@@ -30,7 +30,7 @@ breadConfig_t breadConfig;
 void createTasks(void) {
 	cloudUplinkParams_t cloudUplinkParams = cloudUplink_createParams(sensorDataMutex, sensorData);
 	cloudUplink_createTask(7, (void*) cloudUplinkParams);
-	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(sensorDataMutex, downLinkMessageBufferHandle, breadConfig);
+	cloudDownlinkParams_t cloudDownlinkParams = cloudDownlink_createParams(breadConfigMutex, downLinkMessageBufferHandle, breadConfig);
 	cloudDownlink_createTask(6, (void*) cloudDownlinkParams);
 	climateControlParams_t climateControlParams = climateControl_createParams(sensorDataMutex, breadConfigMutex, sensorData, breadConfig);
 	climateControl_createTask(3, (void*) climateControlParams);

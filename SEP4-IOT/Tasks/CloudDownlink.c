@@ -10,6 +10,7 @@
 #include <hih8120.h>
 
 #include "../DataModels/SensorData.h"
+#include "../Util/MutexDefinitions.h"
 
 cloudDownlinkParams_t cloudDownlink_createParams(SemaphoreHandle_t breadConfigMutex, MessageBufferHandle_t messageBufferHandle, breadConfig_t breadConfig) {
 	cloudDownlinkParams_t cloudDownlinkParams;
@@ -51,7 +52,7 @@ inline void cloudDownlink_taskInit(void* pvParameters) {
 
 inline void cloudDownlink_taskRun() {
   lora_driver_payload_t downlinkPayload;
-		
+
   printf("Listening for downlink...\n");
   if (xMessageBufferReceive(downLinkMessageBufferHandle, &downlinkPayload, sizeof(lora_driver_payload_t), portMAX_DELAY) == 0) {
     printf("Downlink failed (payload was empty)\n");
@@ -62,8 +63,11 @@ inline void cloudDownlink_taskRun() {
       uint16_t readTemp = (uint16_t) (((downlinkPayload.bytes[1] & 0b11000000) << 2) + (0b11111111 & downlinkPayload.bytes[0]));
       uint8_t readHum = (uint8_t) (((downlinkPayload.bytes[2] & 0b10000000) >> 1) + (downlinkPayload.bytes[1] & 0b00111111));
 
-      cloudDownlink_breadConfig->temperature = readTemp;
-      cloudDownlink_breadConfig->humidity = readHum;
+			if (xSemaphoreTake(cloudDownlink_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+				cloudDownlink_breadConfig->temperature = readTemp;
+				cloudDownlink_breadConfig->humidity = readHum;
+				xSemaphoreGive(cloudDownlink_breadConfigMutex);
+			}
       printf("Temperature received: %d\tHumidity received: %d\n", readTemp, readHum);
     }
   }

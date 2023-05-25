@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../Util/MutexDefinitions.h"
+
 hih8120DataCollectionParams_t hih8120DataCollection_createParams(SemaphoreHandle_t sensorDataMutex, sensorData_t sensorData) {
 	hih8120DataCollectionParams_t hih8120DataCollectionParams;
 	hih8120DataCollectionParams = malloc(sizeof(*hih8120DataCollectionParams));
@@ -49,6 +51,9 @@ void hih8120DataCollection_task(void *pvParameters){
 	for (;;)
 	{
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
-		sensorData_hih8120Measure(sensorData);
+		if (xSemaphoreTake(sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+			sensorData_hih8120Measure(sensorData);
+			xSemaphoreGive(sensorDataMutex);
+		}
 	}
 }
