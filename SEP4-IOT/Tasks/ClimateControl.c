@@ -1,7 +1,6 @@
 #include "ClimateControl.h"
 #include "../Util/MutexDefinitions.h"
 #include "rc_servo.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 climateControlParams_t climateControl_createParams(SemaphoreHandle_t sensorDataMutex, SemaphoreHandle_t breadConfigMutex, sensorData_t sensorData, breadConfig_t breadConfig) {
@@ -13,27 +12,29 @@ climateControlParams_t climateControl_createParams(SemaphoreHandle_t sensorDataM
   climateControlParams->breadConfig = breadConfig;
   return climateControlParams;
 }
+
 void climateControl_destroyParams(climateControlParams_t climateControlParams) {
   if (climateControlParams != NULL) {
     free(climateControlParams);
   }
 }
 
-void climateControl_createTask(UBaseType_t taskPriority, void* pvParameters){
-    xTaskCreate(
-    climateControl_task
-    ,  "Climate Control Task"
-    ,  configMINIMAL_STACK_SIZE+200
-    ,  pvParameters
-    ,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
-    ,  NULL );
+void climateControl_createTask(UBaseType_t taskPriority, void* pvParameters) {
+  xTaskCreate(
+  climateControl_task
+  ,  "Climate Control Task"
+  ,  configMINIMAL_STACK_SIZE+200
+  ,  pvParameters
+  ,  taskPriority  // Priority, with configMAX_PRIORITIES - 1 being the highest, and 0 being the lowest.
+  ,  NULL );
 }
+
 SemaphoreHandle_t climateControl_sensorDataMutex;
 SemaphoreHandle_t climateControl_breadConfigMutex;
 sensorData_t climateControl_sensorData;
 breadConfig_t climateControl_breadConfig;
 
-void climateControl_taskInit(void *pvParameters) {
+inline void climateControl_taskInit(void* pvParameters) {
   climateControlParams_t params = (climateControlParams_t)pvParameters;
   climateControl_sensorDataMutex = params->sensorDataMutex;
   climateControl_breadConfigMutex = params->breadConfigMutex;
@@ -42,7 +43,7 @@ void climateControl_taskInit(void *pvParameters) {
   climateControl_destroyParams(params);
 }
 
-void climateControl_taskRun() {
+inline void climateControl_taskRun(void) {
   if (xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE 
       && xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
 
@@ -93,7 +94,7 @@ void climateControl_taskRun() {
     }
     
     
-    if (climateControl_sensorData->latestHumidity < climateControl_breadConfig->humidity - 10){
+    if (climateControl_sensorData->latestHumidity < climateControl_breadConfig->humidity - 10) {
       // Turn up heater 100% for 3 sec
       rc_servo_setPosition(SERVO0, HEATER100PERCENT);
       vTaskDelay(pdMS_TO_TICKS(3000L));
@@ -106,7 +107,7 @@ void climateControl_taskRun() {
   };
 }
 
-void climateControl_task(void *pvParameters){
+void climateControl_task(void* pvParameters) {
   TickType_t xLastWakeTime = xTaskGetTickCount();
   const TickType_t xFrequency = pdMS_TO_TICKS(2000UL); // 2000ms = 2s
   climateControl_taskInit(pvParameters);

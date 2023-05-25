@@ -6,7 +6,7 @@
 // defined by the production code
 extern "C"
 {
-	#include "SensorData.h"
+  #include "SensorData.h"
   #include "../SEP4-IOT/Tasks/ClimateControl.h"
   #include "BreadConfig.h"
   #include "rc_servo.h"
@@ -14,23 +14,20 @@ extern "C"
 
 FAKE_VOID_FUNC(rc_servo_setPosition, uint8_t, int8_t);
 
-class TestClimateControl : public ::testing::Test
-{
+class TestClimateControl : public ::testing::Test {
 protected:
-	void SetUp() override
-	{
+  void SetUp() override {
     RESET_FAKE(rc_servo_setPosition);
-		RESET_FAKE(xTaskCreate);
-		RESET_FAKE(xSemaphoreTake);
-		RESET_FAKE(xSemaphoreGive);
-		RESET_FAKE(xTaskGetTickCount);
-		RESET_FAKE(xTaskDelayUntil);
-		FFF_RESET_HISTORY();
+    RESET_FAKE(xTaskCreate);
+    RESET_FAKE(xSemaphoreTake);
+    RESET_FAKE(xSemaphoreGive);
+    RESET_FAKE(xTaskGetTickCount);
+    RESET_FAKE(xTaskDelayUntil);
+    FFF_RESET_HISTORY();
 
     xSemaphoreTake_fake.return_val = pdTRUE;
-	}
-	void TearDown() override
-	{}
+  }
+  void TearDown() override {}
 };
 
 TEST_F(TestClimateControl,taskinit) {
