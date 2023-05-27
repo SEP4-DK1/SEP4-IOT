@@ -12,6 +12,9 @@ sensorData_t sensorData_init(void) {
   data->totalTemperature = 0;
   data->totalHumidity = 0;
   data->totalCarbondioxide = 0;
+  data->latestTemperature = 0;
+  data->latestHumidity = 0;
+  data->latestCarbondioxide = 0;
   data->co2Counter = 0;
   data->tempHumCounter = 0;
   return data;
@@ -44,6 +47,7 @@ void sensorData_hih8120Measure(sensorData_t data){
 
   if (humidity < 0) humidity = 0;
   if (humidity > 100) humidity = 100;
+  data->latestHumidity = humidity;
   data->totalHumidity += humidity;
     
   data->tempHumCounter++;
@@ -62,6 +66,7 @@ void sensorData_mhz19Measure(sensorData_t data){
     return;
   }
 
+  data->latestCarbondioxide = carbondioxcide;
   data->totalCarbondioxide += carbondioxcide;
   
   data->co2Counter++;
