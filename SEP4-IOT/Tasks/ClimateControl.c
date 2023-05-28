@@ -44,8 +44,9 @@ inline void climateControl_taskInit(void* pvParameters) {
 }
 
 inline void climateControl_taskRun(void) {
-  if (xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE 
-      && xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+  BaseType_t rcSensorData = xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS));
+  BaseType_t rcBreadConfig = xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS));
+  if (rcSensorData == pdTRUE && rcBreadConfig == pdTRUE) {
 
 
     if (climateControl_breadConfig->temperature == 0 && climateControl_breadConfig->humidity == 0) {
@@ -104,7 +105,10 @@ inline void climateControl_taskRun(void) {
 
     xSemaphoreGive(climateControl_sensorDataMutex);
     xSemaphoreGive(climateControl_breadConfigMutex);
-  };
+  } else {
+    if (rcBreadConfig == pdFALSE) xSemaphoreGive(climateControl_breadConfigMutex);
+    if (rcSensorData == pdFALSE) xSemaphoreGive(climateControl_sensorDataMutex);
+  }
 }
 
 void climateControl_task(void* pvParameters) {
