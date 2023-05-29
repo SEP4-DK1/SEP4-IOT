@@ -324,16 +324,25 @@
     <Compile Include="Tasks\CloudUplink.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Tasks\DataCollection.c">
+    <Compile Include="Tasks\HIH8120DataCollection.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Tasks\DataCollection.h">
+    <Compile Include="Tasks\HIH8120DataCollection.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\MHZ19DataCollection.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Tasks\MHZ19DataCollection.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Util\LoRaWANUtil.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Util\LoRaWANUtil.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Util\MutexDefinitions.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

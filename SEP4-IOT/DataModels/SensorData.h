@@ -3,21 +3,22 @@
 #include "SensorDefinitions.h"
 #define TEMPERATURE_CALIBRATION -40
 
-typedef struct sensorData
-{
-    uint16_t latestTemperature;
-    uint16_t latestHumidity;
-    uint16_t latestCarbondioxide;
-    uint32_t totalTemperature;
-    uint32_t totalHumidity;
-    uint32_t totalCarbondioxide;
-    uint16_t counter;
+typedef struct sensorData {
+  uint32_t totalTemperature;
+  uint32_t totalHumidity;
+  uint32_t totalCarbondioxide;
+  uint16_t latestTemperature;
+  uint16_t latestHumidity;
+  uint16_t latestCarbondioxide;
+  uint8_t co2Counter;
+  uint8_t tempHumCounter;
 } * sensorData_t;
 
-sensorData_t sensorData_init();
+sensorData_t sensorData_init(void);
 void sensorData_destroy(sensorData_t data);
 
-void sensorData_measure(sensorData_t data);
+void sensorData_hih8120Measure(sensorData_t data);
+void sensorData_mhz19Measure(sensorData_t data);
 void sensorData_reset(sensorData_t data);
 
 uint16_t sensorData_getTemperatureAverage(sensorData_t data);
