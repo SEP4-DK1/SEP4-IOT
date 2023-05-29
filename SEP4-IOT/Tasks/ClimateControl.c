@@ -44,8 +44,9 @@ inline void climateControl_taskInit(void* pvParameters) {
 }
 
 inline void climateControl_taskRun(void) {
-  if (xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE 
-      && xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS)) == pdTRUE) {
+  BaseType_t rcSensorData = xSemaphoreTake(climateControl_sensorDataMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS));
+  BaseType_t rcBreadConfig = xSemaphoreTake(climateControl_breadConfigMutex, pdMS_TO_TICKS(MUTEXBLOCKTIMEMS));
+  if (rcSensorData == pdTRUE && rcBreadConfig == pdTRUE) {
 
 
     if (climateControl_breadConfig->temperature == 0 && climateControl_breadConfig->humidity == 0) {
@@ -93,23 +94,30 @@ inline void climateControl_taskRun(void) {
       rc_servo_setPosition(SERVO1, VENTILATIONCLOSE);
     }
     
-    
-    if (climateControl_sensorData->latestHumidity < climateControl_breadConfig->humidity - 10) {
+    // Flash boil
+    if ((int16_t) climateControl_sensorData->latestHumidity < (int16_t) climateControl_breadConfig->humidity - 10) {
       // Turn up heater 100% for 3 sec
       rc_servo_setPosition(SERVO0, HEATER100PERCENT);
+      // This is not a great solution. Giving the mutexes here means the flash boil functionality HAS to be at the bottom of the taskRun method
+      xSemaphoreGive(climateControl_sensorDataMutex);
+      xSemaphoreGive(climateControl_breadConfigMutex);
       vTaskDelay(pdMS_TO_TICKS(3000L));
 
       rc_servo_setPosition(SERVO0, HEATER12PERCENT);
+      return;
     }
 
     xSemaphoreGive(climateControl_sensorDataMutex);
     xSemaphoreGive(climateControl_breadConfigMutex);
-  };
+  } else {
+    if (rcBreadConfig == pdFALSE) xSemaphoreGive(climateControl_breadConfigMutex);
+    if (rcSensorData == pdFALSE) xSemaphoreGive(climateControl_sensorDataMutex);
+  }
 }
 
 void climateControl_task(void* pvParameters) {
   TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = pdMS_TO_TICKS(2000UL); // 2000ms = 2s
+  const TickType_t xFrequency = pdMS_TO_TICKS(8000UL); // 8000ms = 8s
   climateControl_taskInit(pvParameters);
 
   for (;;)

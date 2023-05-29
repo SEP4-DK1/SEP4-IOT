@@ -210,14 +210,14 @@ TEST_F(TestClimateControl, testTemperature300Heats100percentWithConfig600Tempera
   breadConfig_destroy(breadConfig);
 }
 
-TEST_F(TestClimateControl, testTemperature400cOpenVentilationWithConfig370Temperature) {
+TEST_F(TestClimateControl, testTemperature600OpenVentilationWithConfig440Temperature) {
   // Set up the test data
   SemaphoreHandle_t sensorDataMutex = xSemaphoreCreateMutex();
   SemaphoreHandle_t breadConfigMutex = xSemaphoreCreateMutex();
   sensorData_t sensorData = sensorData_init();
   breadConfig_t breadConfig = breadConfig_init();
-  sensorData->latestTemperature = 400; 
-  breadConfig->temperature = 370;
+  sensorData->latestTemperature = 600; 
+  breadConfig->temperature = 440;
 
   climateControlParams_t params = climateControl_createParams(sensorDataMutex, breadConfigMutex, sensorData, breadConfig);
 
