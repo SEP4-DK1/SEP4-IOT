@@ -1,0 +1,51 @@
+@startuml startupSequenceDiagram
+skinparam style strictuml
+    participant main
+    participant BreadConfig
+    participant SensorData
+    participant CloudUplink
+    participant CloudDownlink
+    participant ClimateControl
+    participant HIH8120DataCollection
+    participant MHZ19DataCollection
+
+    main -> main++: initialiseSystem()
+    main -> : initialize drivers and mutexes
+    create BreadConfig
+    main -> BreadConfig++: <<create>>\nbreadConfig_init()
+    main <-- BreadConfig
+    create SensorData
+    main -> SensorData++: <<create>>\nsensorData_init()
+    main <-- SensorData
+    main -> main++: createTasks()
+    main -> CloudUplink: cloudUplink_createParams(sensorDataMutex, sensorData)
+    main <-- CloudUplink: cloudUplinkParams_t
+    main -> CloudUplink: cloudUplink_createTask(7, cloudUplinkParams)
+    main <-- CloudUplink
+    main -> CloudDownlink: cloudDownlink_createParams(breadConfigMutex, breadConfig)
+    main <-- CloudDownlink: cloudDownlinkParams_t
+    main -> CloudDownlink: cloudDownlink_createTask(6, cloudDownlinkParams)
+    main <-- CloudDownlink
+    main -> ClimateControl: climateControl_createParams(sensorDataMutex, breadConfigMutex, sensorData, breadConfig)
+    main <-- ClimateControl: climateControlParams_t
+    main -> ClimateControl: climateControl_createTask(3, climateControlParams)
+    main <-- ClimateControl
+    main -> HIH8120DataCollection: hih8120DataCollection_createParams(sensorDataMutex, sensorData)
+    main <-- HIH8120DataCollection: hih8120DataCollectionParams_t
+    main -> HIH8120DataCollection: climateControl_createTask(2, hih8120DataCollectionParams)
+    main <-- HIH8120DataCollection
+    main -> MHZ19DataCollection: mhz19DataCollection_createParams(sensorDataMutex, sensorData)
+    main <-- MHZ19DataCollection: mhz19DataCollectionParams_t
+    main -> MHZ19DataCollection: mhz19DataCollection_createTask(1, mhz19DataCollectionParams)
+    main <-- MHZ19DataCollection
+    deactivate main
+    deactivate main
+    main-> : vTaskStartScheduler()
+    activate CloudUplink
+    activate CloudDownlink
+    activate ClimateControl
+    activate HIH8120DataCollection
+    activate MHZ19DataCollection
+    note over BreadConfig: Tasks are run by FreeRTOS\nafter this function
+    
+@enduml
