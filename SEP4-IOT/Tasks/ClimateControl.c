@@ -110,8 +110,8 @@ inline void climateControl_taskRun(void) {
     xSemaphoreGive(climateControl_sensorDataMutex);
     xSemaphoreGive(climateControl_breadConfigMutex);
   } else {
-    if (rcBreadConfig == pdFALSE) xSemaphoreGive(climateControl_breadConfigMutex);
-    if (rcSensorData == pdFALSE) xSemaphoreGive(climateControl_sensorDataMutex);
+    if (rcBreadConfig == pdTRUE) xSemaphoreGive(climateControl_breadConfigMutex);
+    if (rcSensorData == pdTRUE) xSemaphoreGive(climateControl_sensorDataMutex);
   }
 }
 
